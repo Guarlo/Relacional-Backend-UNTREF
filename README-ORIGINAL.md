@@ -2,8 +2,12 @@
 
 ## Descripción del Proyecto
 
-En este proyecto, se desarrolla una plataforma de streaming usando Node.js y MySQL. La aplicación permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre una base de datos relacional, utilizando el archivo trailerflix.json como referencia para diseñar el modelo de datos.
+En este proyecto, desarrollarás una plataforma de streaming usando Node.js y MySQL. La aplicación permitirá realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre una base de datos relacional, utilizando el archivo trailerflix.json como referencia para diseñar el modelo de datos.
 
+## Entrega
+Esta entrega se enfocará en diseñar y crear la base de datos para una plataforma de streaming, usando MySQL y Node.js, junto con su respectiva documentación.
+
+Aprovecha lo visto en las clases para comenzar a diseñar las tablas y relaciones necesarias, las cuales deberán estar basadas en las propiedades del archivo trailerflix.json.
 
 ## Dataset Proporcionados
 
@@ -17,9 +21,9 @@ El archivo trailerflix.json incluye propiedades como ID, título, categorías, g
 - **géneros**: Almacenará los géneros como Ciencia Ficción, Fantasía, etc.
 - **actores**: Información sobre los actores principales de cada contenido.
 - **tabla intermedia contenido-actores**: Relacionará el contenido con los actores.
-El diseño incluye un bocetado implementado en la plataforma **DB Designer** sugerida en clase. Se genera un archivo SQL de exportación que se usa para crear las tablas en MySQL.
+El diseño debe ser bocetado primero en papel y luego implementado en la plataforma **DB Designer** sugerida en clase. Debes generar un archivo SQL de exportación que podrás usar para crear las tablas en MySQL.
 
-## Pasos del proyecto
+## Pasos a Seguir
 1. **Diseñar el modelo de datos** basado en trailerflix.json.
 2. **Implementar las tablas** en DB Designer, asegurando que haya relaciones adecuadas entre ellas.
 3. **Generar el archivo SQL** para crear las tablas en MySQL.
@@ -56,9 +60,16 @@ El diseño incluye un bocetado implementado en la plataforma **DB Designer** sug
    - Respuesta adecuada con mensajes y códigos de error específicos.
    - Control de acceso a rutas no existentes con respuestas apropiadas.
   
-## Herramientas utilizadas
- **I.A.** para transformar el archivo *trailerflix.json* en un formato que sea más fácil de insertar en MySQL.
+## Herramientas Sugeridas
+Utiliza una **I.A.** como sugerimos en clase para optimizar la inserción de los datos del JSON a la base de datos. Esto puede ayudarte a transformar el archivo *trailerflix.json* en un formato que sea más fácil de insertar en MySQL.
 
+## Fechas Importantes
+
+- **Avance del Proyecto**: 10 de octubre de 2024
+  - Tener diseñadas las tablas en DB Designer, con el archivo SQL generado y los primeros endpoints funcionando.
+
+- **Presentación Final**: 24 de octubre de 2024
+  - Proyecto completo con CRUD y toda la documentación.
 
 ## Estructura del Repositorio
 
@@ -89,9 +100,22 @@ El diseño incluye un bocetado implementado en la plataforma **DB Designer** sug
 - **/models/**: Modelos de datos para las tablas en MySQL.
 - **/routes/**: Definición de las rutas y endpoints del CRUD.
 
+## Instrucciones de Entrega
 
+1. **Fork** el repositorio desde [aquí](https://github.com/FabioDrizZt/Trabajo-Integrador-Relacional-Backend-Diplomatura-UNTREF/fork).
+2. **Clona** tu fork en tu máquina local.
+   ```bash
+   git clone https://github.com/tu-usuario/tu-repositorio-fork.git
+   ```
+3. Realiza los cambios y sube tu código a tu fork.
+4. **Sube** los cambios a tu fork.
+   ```bash
+   git add .
+   git commit -m "Descripción de los cambios"
+   git push origin main
+   ```
 
-5. Se agregan a los siguientes usuarios como colaboradores en este repositorio:
+5. Agrega a los siguientes usuarios como colaboradores en tu repositorio:
    - [FabioDrizZt](https://github.com/FabioDrizZt)
    - [JuanNebbia](https://github.com/JuanNebbia)
    - [NKrein](https://github.com/NKrein)
@@ -99,8 +123,8 @@ El diseño incluye un bocetado implementado en la plataforma **DB Designer** sug
 
 ## Conclusión
 
-Este proyecto permite aplicar conceptos clave de desarrollo backend, diseño de bases de datos y documentación. 
+Este proyecto te permitirá aplicar conceptos clave de desarrollo backend, diseño de bases de datos y documentación. ¡Adelanta los pasos y recuerda mantener tu código limpio y bien documentado!
 
 ---
 
-Fin!
+Recuerda mantener tu código limpio, documentado y seguir las buenas prácticas de desarrollo. ¡Nos vemos en clase para revisar tu progreso el 10 de octubre de 2024!
