@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../conexion/database')
-
 const contenidoController = require('../controllers/contenidoController.js')
+
 
 // Routes for CRUD
 router.get('/', (req, res) => {
@@ -10,11 +9,16 @@ router.get('/', (req, res) => {
     res.send('Hola mundo !')
 })
 
-router.get('/actors', contenidoController.getAllActors);
+router.get('/migrar', contenidoController.migrarTrailerflixJSON);
 
+router.get('/actores', contenidoController.getAllActors);
 
+// Get content by ID
 router.get('/:id', (req, res) => {
-    // Get content by ID
+    res.status(404).json({
+        message: 'contenido no encontrado!',
+        error: 404
+    })
 })
 
 router.post('/', (req, res) => {
@@ -29,5 +33,19 @@ router.delete('/:id', (req, res) => {
     // Delete content by ID
 })
 
+
+// Middleware para manejar rutas inválidas
+router.use((req, res, next) => {
+    const err = new Error('Ruta de contenidos no encontrada.')
+    err.status = 404
+    next(err)
+});
+// Middleware de manejo de errores
+router.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+        messageq: err.message,
+        error: err.status
+    })
+})
+
 module.exports = router
-    
