@@ -1,8 +1,7 @@
-/// Importamos sequelize y la instancia de conexión
-const { DataTypes } = require('sequelize')
-const sequelize = require('../conexion/database') // Ajusta la ruta según tu archivo de conexión
-
 // Definimos el modelo 'Actor'
+const { DataTypes } = require('sequelize')
+const sequelize = require('../conexion/database')
+
 const Actor = sequelize.define('Actor', {
   id: {
     type: DataTypes.INTEGER,
@@ -16,8 +15,10 @@ const Actor = sequelize.define('Actor', {
     allowNull: false
   }
 }, {
-  tableName: 'actores',   // Opcional: define explícitamente el nombre de la tabla si difiere del modelo
-  timestamps: false        // Deshabilita createdAt y updatedAt si no están en la tabla
+  tableName: 'actores',
+  timestamps: false,
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_unicode_ci'
 })
 
 module.exports = Actor

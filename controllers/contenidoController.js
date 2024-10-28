@@ -1,118 +1,242 @@
-const fs = require('fs')
-const Actor = require('../models/actor')
+const Joi = require('joi')
+// const Contenido = require('../models/Contenido')
+// const Categoria = require('../models/Categoria.js')
+// const Genero = require('../models/Genero.js') // Modelo para la tabla generos
+// const Busqueda = require('../models/Busqueda.js') // Modelo para la tabla busquedas
+// const Actor = require('../models/Actor.js') // Modelo para la tabla actores
+// const sequelize = require('../conexion/database')
 
-// Controlador para traer todos los actores
-const getAllActors = async (req, res) => {
+// , Categoria
+const { sequelize, Contenido, Categoria, Actor, Genero, Busqueda, ContenidoActor, ContenidoBusqueda, ContenidoGenero } = require('../models')
+
+
+// Esquema de validación para la tabla contenido
+const contenidoSchema = Joi.object({
+  id: Joi.number().integer().required(),
+  poster: Joi.string().max(255).allow(null),
+  titulo: Joi.string().max(255).required(),
+  categoria_id: Joi.number().integer().required(),
+  resumen: Joi.string().allow(null),
+  temporadas: Joi.number().integer().allow(null),
+  duracion: Joi.number().integer().allow(null),
+  trailer: Joi.string().max(255).allow(null),
+  genero: Joi.array().items(Joi.alternatives().try(Joi.number(), Joi.string())).required(),
+  busqueda: Joi.array().items(Joi.alternatives().try(Joi.number(), Joi.string())).required(),
+  reparto: Joi.array().items(Joi.alternatives().try(Joi.number(), Joi.string())).required()
+})
+
+// Función para buscar o crear ID en la tabla correspondiente
+const findOrCreateIds = async (array, Model, field) => {
+  const ids = []
+  for (const value of array) {
+    if (typeof value === 'number') {
+      const item = await Model.findByPk(value)
+      if (!item) throw new Error(`El ID ${value} no existe en la tabla ${Model.name}`)
+      ids.push(item.id)
+    } else {
+      const item = await Model.findOne({ where: { [field]: value } })
+      if (!item) throw new Error(`El nombre '${value}' no existe en la tabla ${Model.name}`)
+      ids.push(item.id)
+    }
+  }
+  return ids
+}
+
+// Obtener todos los contenidos
+const getAllContenido = async (req, res) => {
   try {
-    const actors = await Actor.findAll()
-
-    // Verificar si la lista está vacía
-    if (actors.length === 0) {
-      return res.status(404).json({
-        message: 'No se encontraron actores',
-        error: 404
-      })
-    }
-    res.status(200).json(actors)
-
+    const contenidos = await Contenido.findAll()
+    res.status(200).json(contenidos)
   } catch (error) {
-    res.status(500).json({
-      message: 'Error al obtener actores',
-      informe: error.message,
-      error: error
-    })   
-}
-}
-
-
-// Función para extraer el valor numérico de la duración
-function obtenerDuracionEnMinutos(duracion) {
-  if (typeof duracion === 'string') {
-    const minutos = duracion.match(/\d+/) // Extraer los dígitos
-    return minutos ? parseInt(minutos[0], 10) : null
+    res.status(500).json({ error: 'No se pudieron obtener los contenidos' })
   }
-  return duracion // Si ya es un número, lo devuelve tal cual
 }
 
-// Función para ajustar las comillas simples y reemplazarlas por backticks
-function ajustarComillasSimples(valor) {
-  if (typeof valor === 'string') {
-    return valor.replace(/'/g, '`') // Reemplazar comillas simples por backticks
+// Obtener un contenido por ID con validación
+const getByIdContenido = async (req, res) => {
+  const { id } = req.params
+  if (!Number.isInteger(Number(id)) || id <= 0) {
+    return res.status(400).json({ error: 'ID inválido' })
   }
-  return valor
-}
 
-/**
-/ Función para migrar el contenido del archivo JSON a una base de datos MySQL
-/ migrarTrailerflixJSON
-**/
-const migrarTrailerflixJSON = (req, res) => {
-  // Leer el archivo JSON
-  //fs.readFileSync('./json/trailerflix.json', 'utf8', (err, data) => {
-  fs.readFile('./json/trailerflix.json', 'utf8', (err, data) => {
-    if (err) {
-      res.send('Error al leer el archivo:', err)
+  try {
+    // Obtener el contenido básico
+    const contenido = await Contenido.findByPk(id)
+    if (!contenido) {
+      return res.status(404).json({ error: 'Contenido no encontrado' })
     }
 
-    // Parsear el contenido del JSON
-    const contenido = JSON.parse(data)
-
-    //     // ********************************************************************************************************
-    // const insertQuery = `INSERT INTO contenido (id, poster, titulo, categoria_id, resumen, temporadas, duracion, trailer) VALUES`
-    // console.log(insertQuery)
-
-    // // Recorre cada elemento y genera las sentencias INSERT
-    // contenido.forEach(item => {
-    //   //console.log(item.temporadas !== undefined && item.temporadas !== 'N/A' ? item.temporadas : 'NULL')
-    //   if (item.id < 100) {
-    //     // Ajusta el campo duración
-    //     const duracionEnMinutos = obtenerDuracionEnMinutos(item.duracion)
-    //     const duracionAjustado = item.duracion !== undefined ? duracionEnMinutos : 'NULL'
-
-    //     // Ajustar los valores con comillas simples si es necesario
-    //     const tituloAjustado = ajustarComillasSimples(item.titulo)
-    //     const resumenAjustado = ajustarComillasSimples(item.resumen)
-    //     const temporadasAjustado = item.temporadas === undefined || item.temporadas === 'N/A' || item.temporadas === '' ? 'NULL' : item.temporadas
-    //     //console.log(`ID: > ${item.id}`) 
-    //     //console.log(item.temporadas === undefined)
-    //     //console.log(item.temporadas === '')
-    //     //console.log(`--> ${item.temporadas}`) 
-    //     //console.log(item.temporadas === undefined || item.temporadas === 'N/A' || item.temporadas === '' ? 'NULL' : item.temporadas)
-    //     // Generar los valores con cada campo en una línea separada
-    //     const values = `(${item.id}, '${item.poster}', '${tituloAjustado}', (SELECT id FROM categorias WHERE nombre = '${item.categoria}'), '${resumenAjustado}', ${temporadasAjustado}, ${duracionAjustado}, '${item.trailer}'),`
-    //     // Imprimir el resultado en la consola
-    //     console.log(values)
-    //   }
-    //     // ********************************************************************************************************
-
-    // Acumulador para almacenar las sentencias SQL
-    let insertActoresStatements = ''
-    insertActoresStatements += `INSERT INTO contenido_actores (contenido_id, actor_id) VALUES \n`
-    // Recorre cada elemento y genera las sentencias INSERT para actores
-    contenido.forEach(item => {
-      // Parsear el campo reparto y generar las sentencias para la tabla contenido_actores
-      const reparto = item.reparto.split(',').map(actor => actor.trim())
-
-      reparto.forEach(actor => {
-        // Generar la sentencia INSERT para cada actor del reparto
-        insertActoresStatements += `(${item.id}, (SELECT id FROM actores WHERE nombre = '${actor.replace(/'/g, '`')}')),\n`
-      })
+    // Consultas para obtener los IDs relacionados
+    const generoIds = await ContenidoGenero.findAll({
+      where: { contenido_id: id },
+      attributes: ['genero_id']
     })
-    // Imprimir el resultado en la consola
-    console.log(insertActoresStatements)
 
+    const busquedaIds = await ContenidoBusqueda.findAll({
+      where: { contenido_id: id },
+      attributes: ['busqueda_id']
+    })
 
+    const repartoIds = await ContenidoActor.findAll({
+      where: { contenido_id: id },
+      attributes: ['actor_id']
+    })
 
-    //********************************************************************************************************
-    res.send('Acá se exporta migrarTrailerflixJSON')
-  })
+    // Formatear los resultados en el JSON deseado
+    const formattedContenido = {
+      id: contenido.id,
+      poster: contenido.poster,
+      titulo: contenido.titulo,
+      categoria_id: contenido.categoria_id,
+      genero: generoIds.map(g => g.genero_id),
+      busqueda: busquedaIds.map(b => b.busqueda_id),
+      resumen: contenido.resumen,
+      temporadas: contenido.temporadas,
+      duracion: contenido.duracion,
+      reparto: repartoIds.map(a => a.actor_id),
+      trailer: contenido.trailer
+    }
+
+    res.status(200).json(formattedContenido)
+  } catch (error) {
+    //console.error("Error al obtener el contenido:", error) // Muestra detalles del error en la consola
+    res.status(500).json({ error: 'Error al obtener el contenido' })
+  }
 }
 
+// Obtener un actor por ID con validación de ID y sus contenidos.
+const getByIdContenidoFull = async (req, res) => {
+  const { id } = req.params
+  try {
+    const contenido = await Contenido.findByPk(id,
+      {
+        include: [
+          {
+            model: Actor,
+            attributes: ['nombre']
+          },
+          {
+            model: Genero,
+            attributes: ['nombre']
+          },
+          {
+            model: Busqueda,
+            attributes: ['termino']
+          },
+          {
+            model: Categoria,
+            as: 'categoria', 
+            attributes: ['nombre']
+          }
+        ]
+      }
+    )
+    res.status(201).json(contenido)
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el contenido y sus actores', error })
+  }
+}
 
-/**
-/ Función para migrar el contenido del archivo JSON a una base de datos MySQL
-/ migrarTrailerflixJSON
-**/
+// Crear un nuevo contenido con validación de datos y relaciones
+const createContenido = async (req, res) => {
+  const { error } = contenidoSchema.validate(req.body)
+  if (error) {
+    return res.status(400).json({ error: 'Datos inválidos', details: error.details })
+  }
 
+  const { genero, busqueda, reparto, ...contenidoData } = req.body
 
-module.exports = { migrarTrailerflixJSON, getAllActors }
+  //console.log("Contenido Data:", contenidoData)
+  try {
+    const generoIds = await findOrCreateIds(genero, Genero, 'nombre')
+    const busquedaIds = await findOrCreateIds(busqueda, Busqueda, 'termino')
+    const repartoIds = await findOrCreateIds(reparto, Actor, 'nombre')
+
+    console.log("Genero IDs:", generoIds)
+    console.log("Busqueda IDs:", busquedaIds)
+    console.log("Reparto IDs:", repartoIds)
+
+    console.log("Contenido 2 Data:", contenidoData)
+
+    const contenido = await sequelize.transaction(async (t) => {
+      const newContenido = await Contenido.create(contenidoData, { transaction: t })
+      await newContenido.addActors(repartoIds, { transaction: t })
+      await newContenido.addBusquedas(busquedaIds, { transaction: t })
+      await newContenido.addGeneros(generoIds, { transaction: t })
+      return newContenido
+    })
+    res.status(201).json(contenido)
+  } catch (error) {
+    res.status(400).json({ error: error.message || 'Error al crear el contenido' })
+  }
+}
+
+// Actualizar un contenido completo por ID
+const updateContenido = async (req, res) => {
+  const { id } = req.params
+  const { error } = contenidoSchema.validate(req.body)
+
+  if (error || !Number.isInteger(Number(id)) || id <= 0) {
+    return res.status(400).json({ error: 'Datos o ID inválidos', details: error?.details })
+  }
+
+  const { genero, busqueda, reparto, ...contenidoData } = req.body
+
+  try {
+    const generoIds = await findOrCreateIds(genero, Genero, 'nombre')
+    const busquedaIds = await findOrCreateIds(busqueda, Busqueda, 'termino')
+    const repartoIds = await findOrCreateIds(reparto, Actor, 'nombre')
+
+    const contenido = await sequelize.transaction(async (t) => {
+      const [updated] = await Contenido.update(contenidoData, { where: { id }, transaction: t })
+      if (!updated) throw new Error('Contenido no encontrado para actualizar')
+
+      const existingContenido = await Contenido.findByPk(id, { transaction: t })
+      await existingContenido.setGeneros(generoIds, { transaction: t })
+      await existingContenido.setBusquedas(busquedaIds, { transaction: t })
+      await existingContenido.setActores(repartoIds, { transaction: t })
+
+      return existingContenido
+    })
+
+    res.status(200).json(contenido)
+  } catch (error) {
+    res.status(400).json({ error: error.message || 'Error al actualizar el contenido' })
+  }
+}
+
+const deleteContenido = async (req, res) => {
+  const { id } = req.params
+
+  if (!Number.isInteger(Number(id)) || id <= 0) {
+    return res.status(400).json({ error: 'ID inválido' })
+  }
+
+  try {
+    // Eliminar registros de las tablas de unión
+    await ContenidoActor.destroy({ where: { contenido_id: id } })
+    await ContenidoBusqueda.destroy({ where: { contenido_id: id } })
+    await ContenidoGenero.destroy({ where: { contenido_id: id } })
+
+    // Eliminar el registro principal
+    const deletedRows = await Contenido.destroy({ where: { id } })
+
+    if (deletedRows) {
+      res.status(200).json({ message: 'Contenido eliminado correctamente' })
+    } else {
+      res.status(404).json({ error: 'Contenido no encontrado' })
+    }
+  } catch (error) {
+    console.error('Error al eliminar el contenido:', error)
+    res.status(500).json({ error: 'Error al eliminar el contenido' })
+  }
+}
+
+module.exports = {
+  getAllContenido,
+  getByIdContenido,
+  getByIdContenidoFull,
+  createContenido,
+  updateContenido,
+  deleteContenido
+}
