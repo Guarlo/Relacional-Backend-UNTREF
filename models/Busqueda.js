@@ -12,7 +12,8 @@ const Busqueda = sequelize.define('Busqueda', {
     termino: {
         type: DataTypes.STRING(100),
         unique: true,
-        allowNull: false
+        allowNull: false,
+        collate: 'utf8mb4_bin' // Collation case-sensitive para MySQL
     }
 }, {
     tableName: 'busquedas',

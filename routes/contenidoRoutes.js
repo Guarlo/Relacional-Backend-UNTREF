@@ -14,6 +14,10 @@ const generoController = require('../controllers/generoController')
 
 //router.get('/migrar', contenidoController.migrarTrailerflixJSON)
 
+router.get('/', (req, res) => {
+    res.send('BIENVENIDO A LA API DE CONTENIDOS!')
+})
+
 router.get('/categorias', categoriasController.getAllCategorias)
 router.get('/categorias/:id', categoriasController.getByIdCategoria)
 router.post('/categorias', categoriasController.createCategoria)
@@ -28,7 +32,42 @@ router.put('/generos/:id', generoController.updateGenero)
 router.delete('/generos/:id', generoController.deleteGenero)
 
 router.get('/actores', actoresController.getAllActors)
+
+/**
+ * @swagger
+ * /actores/{id}:
+ *   get:
+ *     summary: Obtener un actor por ID
+ *     description: Endpoint para obtener un actor específico por su ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del actor
+ *     responses:
+ *       200:
+ *         description: Actor encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Actor'
+ *       404:
+ *         description: Actor no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error en el servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.get('/actores/:id', actoresController.getByIdActor)
+
 router.get('/actores/:actorId/contenido', actoresController.getByIdActorContenido)
 router.post('/actores', actoresController.createActor)
 router.post('/actores/bulk', actoresController.bulkCreateActors)
@@ -36,12 +75,13 @@ router.put('/actores/:id', actoresController.updateActor)
 router.patch('/actores/:id', actoresController.patchActor) // Ruta PATCH
 router.delete('/actores/:id', actoresController.deleteActor)
 
-router.get('/', contenidoController.getAllContenido)
-router.get('/:id/full', contenidoController.getByIdContenidoFull)
-router.get('/:id', contenidoController.getByIdContenido)
-router.post('/', contenidoController.createContenido)
-router.put('/:id', contenidoController.updateContenido)
-router.delete('/:id', contenidoController.deleteContenido)
+router.get('/contenido/', contenidoController.getAllContenido)
+//router.get('/:id/full', contenidoController.getByIdContenidoFull)
+router.get('/contenido/:id/full', contenidoController.getByIdContenidoFull)
+router.get('/contenido/:id', contenidoController.getByIdContenido)
+router.post('/contenido/', contenidoController.createContenido)
+router.put('/contenido/:id', contenidoController.updateContenido)
+router.delete('/contenido/:id', contenidoController.deleteContenido)
 
 // // Get content by ID
 // router.get('/:id', (req, res) => {

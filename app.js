@@ -3,29 +3,44 @@ const morgan = require('morgan')
 const express = require('express')
 const app = express()
 const contenidoRoutes = require('./routes/contenidoRoutes')
-//const contenidoRoutes = require('./routes/contenido')
-//app.use('/api', contenidoRoutes)
-// const db = require('./conexion/database')
+const { swaggerDocs, swaggerUi } = require('./utils/swaggerConfig') 
 
-//
+//----------------------------------------------------------------
 // Middlewares
-//
-// Usar morgan como middleware para registrar las solicitudes en la consola
-app.use(morgan('dev')) // Usa 'dev' para un formato de logging conciso en desarrollo
+//----------------------------------------------------------------
+// Swagger Config
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+
+// Morgan para registrar las solicitudes en la consola
+app.use(morgan('dev'))
+//--
 app.use(express.json())
-app.use('/contenido', contenidoRoutes)
 
-app.get('/', (req, res) => {
-    res.send('BIENVENIDO A LA API DE CONTENIDOS!')
- })
+//----------------------------------------------------------------
+// Bienvenida
+//----------------------------------------------------------------
+app.get('/', (req, res, next) => {
+  res.status(200).redirect('http://localhost:3000/apicontenido')
+  next(err)
+})
 
+//----------------------------------------------------------------
+// Routes
+//----------------------------------------------------------------
+app.use('/apicontenido', contenidoRoutes)
+
+
+//----------------------------------------------------------------
 // Middleware para manejar rutas inválidas
+//----------------------------------------------------------------
 app.use((req, res, next) => {
   const err = new Error('Ruta no encontrada.')
   err.status = 404
   next(err)
 })
+//----------------------------------------------------------------
 // Middleware de manejo de errores
+//----------------------------------------------------------------
 app.use((err, req, res, next) => {
   console.log("mdl errors!")
   res.status(err.status || 500).json({
@@ -37,5 +52,6 @@ app.use((err, req, res, next) => {
 // Server
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}/contenido`)
-});
+  console.log(`Server running on port http://localhost:${PORT}/apicontenido`)
+  console.log(`Docuentación de la API en http://localhost:${PORT}/api-docs`)
+})

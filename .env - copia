@@ -1,0 +1,15 @@
+# Este es un archivo de configuración de entorno
+
+# Configuración de la base de datos
+DB_NAME = trailerflix
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=1234
+DB_DIALECT=mysql
+
+# Configuración del servidor
+PORT=3000
+
+# Entorno de la aplicación
+NODE_ENV = development
+# NODE_ENV = production

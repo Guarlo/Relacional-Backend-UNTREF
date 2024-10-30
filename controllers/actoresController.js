@@ -1,4 +1,3 @@
-//const fs = require('fs')
 const Joi = require('joi')
 const { Actor, Contenido } = require('../models');
 
