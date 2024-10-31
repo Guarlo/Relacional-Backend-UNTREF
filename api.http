@@ -1,8 +1,216 @@
+@baseUrl = http://localhost:3000/apicontenido
+
+
+
 ### Bienvenida
 GET http://localhost:3000/
 
 ### Bienvenida
 GET http://localhost:3000/apicontenido/
+
+
+
+################################
+##  CONTENIDO
+################################
+
+
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/74
+
+### Get contenido por Id y relaciones full
+GET http://localhost:3000/apicontenido/contenido/74/full
+
+### Get contenidos por Id de actor
+# Todas la obras de un actor en particular
+GET http://localhost:3000/apicontenido/contenido/actor/2
+
+
+### Get de todos los contenidos. Sin discriminar!
+GET {{baseUrl}}/contenido
+
+
+### Get de todos los contenidos, y opcinal consulta por:
+  # Categoría: 1 (Id de la categoría en la base de datos: 1=Serie / 2=Película) 
+  # Genero: Sci-Fi
+  # Reparto: Pedro Pascal
+  # Búsqueda: Suspenso
+### Valores de los parámetros
+@categoria = 1
+@genero = Sci-Fi
+@reparto = Pedro Pascal
+@busqueda = Suspenso
+### Obtener contenidos filtrados por parámetros específicos
+GET {{baseUrl}}/contenido?categoria={{categoria}}&genero={{genero}}&reparto={{reparto}}&busqueda={{busqueda}}
+
+
+### Valores de los parámetros. Solo genero
+@genero = Sci-Fi
+### Obtener contenidos filtrados por parámetros específicos
+GET {{baseUrl}}/contenido?genero={{genero}}
+
+
+##
+#  No llegué con las busquedas parciales como por ejemplo:
+#   >  @reparto = Pedro 
+#  y que encuentre todos los Pedro, incluido "Pedro Pascal"
+##
+
+
+
+### Crear un contenido.
+# En este caso, ya eiste y da: HTTP/1.1 409 Conflict
+POST http://localhost:3000/apicontenido/contenido/17
+Content-Type: application/json
+
+  {
+    "id": 17,
+    "poster": "./posters/17.jpg",
+    "titulo": "Halt and Catch Fire",
+    "categoria_id": "Serie",
+    "genero": [
+      "Ficción",
+      "Drama",
+      "Tecnología"
+    ],
+    "busqueda": [
+      "Halt and Catch Fire",
+      "Ficción",
+      "Drama",
+      "Tecnología",
+      "Lee Pace",
+      "Scoot McNairy",
+      "Mackenzie Davis",
+      "Kerry Bishé",
+      "Toby Huss",
+      "Alana Cavanaugh"
+    ],
+    "resumen": "Situada en los inicios de la década de 1980, un visionario ficticio, un ingeniero electrónico y una prodigiosa ingeniera, se alían a una programadora de software para confrontar con las corporaciones informáticas dominantes de la época. El Personal de la firma y sus socios de negocio, comenzarán una carrera que cambiará la cultura en el Estado de Texas, cuna de las empresas de tecnología, casi de la misma forma que lo es hoy Silicon Valey. \n Esta historia ficticia emula el trabajo realizado, en su momento, por la firma Compaq, cuando clonó el BIOS de las Computadoras Personales IBM, dando vida así al económico mercado de los clones. Mostrando también, a lo largo de sus 4 temporadas, el nacimiento de la arquitectura abierta de hardware, los videojuegos online, las salas de chat y de trueque de productos físicos, los BBS, y las primeras nubes computacionales, hasta la llegada de Internet (sin dejar afuera la guerra de los web browsers).",
+    "temporadas": 4,
+    "reparto": [
+      "Lee Pace",
+      "Scoot McNairy",
+      "Mackenzie Davis",
+      "Kerry Bishé",
+      "Toby Huss",
+      "Alana Cavanaugh"
+    ],
+    "trailer": "https://www.youtube.com/embed/pWrioRji60A",
+    "duracion": 0
+  }
+
+### Crear un contenido. 
+# permite usar ID o Nombres/Terminos para las relaciones.
+# Si uno de los Id de relaciones no existe en la DB da un error
+# y si se pasa una descripción, se la da de alta en la tabla correspondiemnte.
+POST http://localhost:3000/apicontenido/contenido/101
+Content-Type: application/json
+
+{
+  "id": 101,
+  "poster": "./posters/101.jpg",
+  "titulo": "101 dalmatas",
+  "categoria_id": "Película",
+  "genero": [2, 12, 13, "Dálmatas"],
+  "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, 1128, "101 dálmatas"],
+  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
+  "temporadas": 0,
+  "duracion": 101,
+  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
+  "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
+}   
+
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/101
+
+
+### Actualizar un contenido. COMPLETO !!!
+# Para este caso, cambia el nonmbre, duracion y 
+# se saca de busqueda el id:1128 !!!
+PUT http://localhost:3000/apicontenido/contenido/101
+Content-Type: application/json
+
+{
+  "id": 101,
+  "poster": "./posters/101.jpg",
+  "titulo": "101 dálmatas con manchas NEGRAS",
+  "categoria_id": "Película",
+  "genero": [2, 12, 13, "Dálmatas"],
+  "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, "101 dálmatas"],
+  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
+  "temporadas": 0,
+  "duracion": 102,
+  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
+  "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
+}   
+
+####################################################################
+# Resultados pos PUT
+# "titulo": "101 dálmatas con manchas NEGRAS",
+# "duracion": 102
+# se quitó el id:1128 en busqueda
+##################################################################
+#
+#{
+#  "id": 101,
+#  "poster": "./posters/101.jpg",
+#  "titulo": "101 dálmatas con manchas NEGRAS",
+#  "categoria_id": 2,
+#  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
+#  "temporadas": 0,
+#  "duracion": 102,
+#  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
+#  "generoIds": [ 2, 12, 13, 25 ],
+#  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 834 ]
+#}
+
+
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/101
+
+
+##################################
+### Actualizar un contenidos parcialmente
+# se cambia "titulo": "101 dálmatas con manchas BLANCAS"
+# Solo porque Si y ya, hago que "id": sea obligatorio en el json, ya que lo toma de { id } = req.params
+##################################
+PATCH http://localhost:3000/apicontenido/contenido/101
+Content-Type: application/json
+
+{
+  "id": 101,
+  "titulo": "101 dálmatas con manchas BLANCAS 2"
+}
+
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/101
+
+
+### Actualizar un contenidos parcialmente con datos vacios
+PATCH http://localhost:3000/apicontenido/contenido/101
+Content-Type: application/json
+
+{
+  "id": 101,
+  "poster": "./posters/102.jpg",
+  "titulo": "101 dálmatas con manchas BLANCAS con Validación PATCH"
+}
+
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/101
+
+
+
+################################
+### Delete contenido por Id
+################################
+#  Delete !!!!!!!! OJO!
+################################
+DELETE http://localhost:3000/apicontenido/contenido/101
+
+
+
 
 
 
@@ -41,78 +249,6 @@ Content-Type: application/json
 
 ### Delete generos por Id
 DELETE http://localhost:3000/apicontenido/generos/25
-
-
-
-
-
-################################
-##  CONTENIDO
-################################
-
-### Get de todos los contenidos
-GET http://localhost:3000/apicontenido/contenido
-
-### Get contenido por Id
-GET http://localhost:3000/apicontenido/contenido/98
-
-### Get contenido por Id y relaciones full
-GET http://localhost:3000/apicontenido/contenido/98/full
-
-
-
-### Delete contenido por Id
-DELETE http://localhost:3000/apicontenido/contenido/101
-
-
-### Crear un contenido
-POST http://localhost:3000/apicontenido/contenido/
-Content-Type: application/json
-
-{
-  "id": 101,
-  "poster": "./posters/101.jpg",
-  "titulo": "101 dalmatas",
-  "categoria_id": "Película",
-  "genero": [2, 12, 13, "Dálmatas"],
-  "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, 1128, "101 dálmatas"],
-  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
-  "temporadas": 0,
-  "duracion": 101,
-  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
-  "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
-}   
-
-### Actualizar un contenidos totalmente 
-PUT http://localhost:3000/apicontenido/101
-Content-Type: application/json
-
-{
-  "titulo": "3022x2"
-}
-
-### Actualizar un contenidos parcialmente
-PATCH http://localhost:3000/apicontenido/101
-Content-Type: application/json
-
-{
-  "titulo": "3022x2"
-}
-
-### Actualizar un contenidos parcialmente con datos vacios
-PATCH http://localhost:3000/apicontenido/101
-Content-Type: application/json
-
-{
-  "titulo": ""
-}
-
-
-### DELETE Contenido por Id
-DELETE http://localhost:3000/apicontenido/101
-
-
-
 
 
 
@@ -189,10 +325,6 @@ GET http://localhost:3000/apicontenido/actores
 
 ### Get actor por Id
 GET http://localhost:3000/apicontenido/actores/30
-
-### Get actor por Id y sus contenidos
-GET http://localhost:3000/apicontenido/actores/30/contenido 
-
 
 ### Crear un actor
 POST http://localhost:3000/apicontenido/actores

@@ -23,5 +23,6 @@ Actor.belongsToMany(Contenido, { through: { model: ContenidoActor, timestamps: f
 Contenido.belongsToMany(Busqueda, { through: { model: ContenidoBusqueda, timestamps: false }, as: 'busqueda', foreignKey: 'contenido_id', otherKey: 'busqueda_id' })
 Busqueda.belongsToMany(Contenido, { through: { model: ContenidoBusqueda, timestamps: false }, foreignKey: 'busqueda_id', otherKey: 'contenido_id' })
 
+
 // Exportar todos los modelos y sequelize para sincronización
 module.exports = { sequelize, Genero, Actor, Busqueda, Categoria, Contenido, ContenidoActor, ContenidoBusqueda, ContenidoGenero }

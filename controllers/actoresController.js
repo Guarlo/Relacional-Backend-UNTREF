@@ -20,24 +20,6 @@ const getAllActors = async (req, res) => {
     }
 }
 
-// Obtener un actor por ID con validación de ID y sus contenidos.
-const getByIdActorContenido = async (req, res) => {
-
-    const { actorId } = req.params
-    try {
-      const actor = await Actor.findByPk(actorId,
-        {
-          include: {
-            model: Contenido
-          }
-        }
-      )
-      res.status(201).json(actor)
-    } catch (error) {
-      res.status(500).send({ error: 'no se pudo crear la peli' })
-    }
-  }
-  
 // Obtener un actor por ID con validación de ID
 const getByIdActor = async (req, res) => {
     const { id } = req.params
@@ -163,7 +145,6 @@ const deleteActor = async (req, res) => {
 module.exports = {
     getAllActors,
     getByIdActor,
-    getByIdActorContenido,
     createActor,
     bulkCreateActors,
     updateActor,
