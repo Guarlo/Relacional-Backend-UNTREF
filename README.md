@@ -4,16 +4,23 @@
 
 En este proyecto, se desarrolla una plataforma de streaming usando Node.js y MySQL. La aplicación permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre una base de datos relacional, utilizando el archivo trailerflix.json como referencia para diseñar el modelo de datos.
 
-#### Dataset Proporcionados
 
+## Etapas del proyecto
+1. **Diseñar el modelo de datos** basado en trailerflix.json.
+2. **Implementar las tablas** en DB Designer, asegurando que haya relaciones adecuadas entre ellas.
+3. **Generar el archivo SQL** para crear las tablas en MySQL.
+4. **Migrar los datos** del archivo JSON a MySQL utilizando los insert correspondientes.
+
+
+#### Dataset Proporcionado
 - **trailerflix.json**: Contiene información detallada sobre contenido de la plataforma, como películas y series. 
 - Este archivo se usa como base para diseñar el modelo de datos.
 
 ### Herramientas utilizadas
 - La **I.A.** ha sido de una ayuda invaluable, pero dado que los resultados de ésta, para transformar el archivo *trailerflix.json* en un formato para insertar en MySQL fueron negativos, decidí usar JS para crear una función  llamada fnc_migra_trailerflix.js 
 - Workbench para diseñar, crear y administrar la base de datos.
-- Documentación.
-
+- Documentación con Swagger.
+ 
 ### Dependencias utilizadas
     "express": "^4.21.1",
     "joi": "^17.13.3",
@@ -23,12 +30,15 @@ En este proyecto, se desarrolla una plataforma de streaming usando Node.js y MyS
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
 
+## Migración de dato (caso particular)!
+La importación de datos está hecha en JS mediante la función fnc_migra_trailerflix.js. Esta función lee el archivo trailerflix.json, le hace ajustes para que cumpla con el formato de **POST_http://localhost:3000/apicontenido/contenido/** y carga la totalidad de las tablas creando todos los registros para cada una de las tablas y arma las relaciones correspondientes. Evalúa repeticiones, datos nulos en algunos de los objetos y datos mal formados que llegan desde el archivo trailerflix.json.
 
-## Etapas del proyecto
-1. **Diseñar el modelo de datos** basado en trailerflix.json.
-2. **Implementar las tablas** en DB Designer, asegurando que haya relaciones adecuadas entre ellas.
-3. **Generar el archivo SQL** para crear las tablas en MySQL.
-4. **Migrar los datos** del archivo JSON a MySQL utilizando los insert correspondientes.
+
+### Cómo usar fnc_migra_trailerflix.js
+    1. Lo primero es crear la base de datos con: trailerflixDump20241029_estructura.sql
+    2. Ejecutar desde la consola: ..\>node .\fnc_migra_trailerflix.js
+    Listo! ya se puede comenzar a usar la API 
+
 
 ## Diseño del modelo de Base de Datos
 El archivo trailerflix.json incluye propiedades como ID, título, categorías, géneros, resumen, temporadas, reparto y enlaces a trailers. 
@@ -51,15 +61,12 @@ Basado en esta estructura, se diseñó una base de datos llamada trailerflix con
 
 
 ## Archivos SQL
-En la carpeta ./database están los achivos .sql para crear la DB y otras acciones:
+En la carpeta ./database están los archivos .sql para crear la DB y otras acciones:
   -  ./database/trailerflixDump20241029_completa.sql 
   -  ./database/trailerflixDump20241029_estructura.sql 
   -  ./database/trailerflixDump20241029_datos.sql
-  -  ./database/Linpiar DB trailerflix.sql
+  -  ./database/Limpiar DB trailerflix.sql
 
-
-## Migración de dato (caso particular)!
-La importación de datos está hecha en JS mediate la función fnc_migra_trailerflix.js. Esta función lee el archivo trailerflix.json, le hace ajustes para que cumpla con el formato de **POST_http://localhost:3000/apicontenido/contenido/** y carga la totalidad de las tablas creando todos los registros para cada una de las tablas y arma las relaciones correspondientes. Evalúa repeticiones, datos nulos en algunos de los objetos y datos mal formados que llegan desde el archivo trailerflix.json.
 
 
 
@@ -93,18 +100,23 @@ La importación de datos está hecha en JS mediate la función fnc_migra_trailer
    - Manejo de errores en la estructura de las solicitudes y respuestas.
    - Respuesta adecuada con mensajes y códigos de error específicos.
    - Control de acceso a rutas no existentes con respuestas apropiadas.
+```javascript
+    Ejemplo:
+    {"error": "No se puede eliminar el género porque está relacionado con contenido existente"}
+```
   
 
 
 ## Documentación de los endpoint de la API
  La documentacion de los endpoint se realiza mediante *Swagger*.
 - Punto de acceso: http://localhost:3000/api-docs
-Algunas de las funciones se pueden probar desde esta url de documentación.
+Algunas de las funciones se pueden probar desde esta url de documentación. La funcionalidad completa se logra con  **REST Client** desde *api.http*
 
 
 
 ## Uso de los endpoint mediante api.http
-Mediante **REST Client** se crea api.http donde se pueden probar los endpoint de la API
+Mediante **REST Client** se crea api.http donde se pueden probar los endpoints de la API.
+Aquí es donde se encuentra toda la funcionalidad que puede proveer la API para ser testeada.  
 - Punto de acceso: http://localhost:3000/apicontenido
 
 
@@ -169,9 +181,9 @@ Mediante **REST Client** se crea api.http donde se pueden probar los endpoint de
 
 Este proyecto permite aplicar conceptos claves de desarrollo backend, diseño de bases de datos y documentación. 
 
-Este es un desafío para mí; volver a estudiar a este nivel despues de treinta años de mis primeros pasos en el mundo de sistemas.
+Este es un desafío para mí! Volver a estudiar a este nivel universitario después de treinta años de mis primeros pasos en el mundo de sistemas.
 
-"Gracias a todos los docentes por la calida humana y el profecionalismo!"
+"Gracias a todos los docentes por la calidad humana y el profesionalismo!"
 
 ---
 

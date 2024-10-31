@@ -1,9 +1,24 @@
 const Joi = require('joi')
 const { sequelize, Contenido, Categoria, Actor, Genero, Busqueda, ContenidoActor, ContenidoBusqueda, ContenidoGenero } = require('../models')
 
-const contenidoSchema = Joi.object({
+
+const contenidoSchemaPost = Joi.object({
+  id: Joi.number().integer(),
+  poster: Joi.string().max(255).allow(null, '').optional(),
+  titulo: Joi.string().max(255).required(),
+  categoria_id: Joi.alternatives().try(Joi.number().integer(), Joi.string()).required(),
+  resumen: Joi.string().allow(null),
+  temporadas: Joi.number().integer().allow(null),
+  duracion: Joi.number().integer().allow(null),
+  trailer: Joi.string().max(255).allow(null),
+  genero: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).required(),
+  busqueda: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).required(),
+  reparto: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).required()
+})
+
+const contenidoSchemaPut = Joi.object({
   id: Joi.number().integer().required(),
-  poster: Joi.string().max(255).allow(null),
+  poster: Joi.string().max(255).allow(null, '').optional(),
   titulo: Joi.string().max(255).required(),
   categoria_id: Joi.alternatives().try(Joi.number().integer(), Joi.string()).required(),
   resumen: Joi.string().allow(null),
@@ -17,17 +32,18 @@ const contenidoSchema = Joi.object({
 
 const contenidoSchemaPatch = Joi.object({
   id: Joi.number().integer().required(), // Se mantiene como requerido para identificar el contenido
-  poster: Joi.string().max(255).allow(null).optional(), // Ahora opcional
-  titulo: Joi.string().max(255).optional(), // Ahora opcional
-  categoria_id: Joi.alternatives().try(Joi.number().integer(), Joi.string()).optional(), // Ahora opcional
-  resumen: Joi.string().allow(null).optional(), // Ahora opcional
-  temporadas: Joi.number().integer().allow(null).optional(), // Ahora opcional
-  duracion: Joi.number().integer().allow(null).optional(), // Ahora opcional
-  trailer: Joi.string().max(255).allow(null).optional(), // Ahora opcional
-  genero: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).optional(), // Ahora opcional
-  busqueda: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).optional(), // Ahora opcional
-  reparto: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).optional() // Ahora opcional
+  poster: Joi.string().max(255).allow(null, '').optional(), // Opcional, permite null y cadena vacía
+  titulo: Joi.string().max(255).optional(),
+  categoria_id: Joi.alternatives().try(Joi.number().integer(), Joi.string()).optional(),
+  resumen: Joi.string().allow(null).optional(),
+  temporadas: Joi.number().integer().allow(null).optional(),
+  duracion: Joi.number().integer().allow(null).optional(),
+  trailer: Joi.string().max(255).allow(null).optional(),
+  genero: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).optional(),
+  busqueda: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).optional(),
+  reparto: Joi.array().items(Joi.alternatives().try(Joi.number().strict(), Joi.string().strict())).optional()
 })
+
 
 // Función para buscar o crear ID en la tabla correspondiente
 const findOrCreateIds = async (array, Model, field) => {
@@ -198,23 +214,22 @@ const getContenidoByIdActor = async (req, res) => {
 // Crear un nuevo contenido con validación de datos y relaciones
 const createContenido = async (req, res) => {
   // Validación de los datos de entrada
-  const { id } = req.params // ID del contenido desde la URL
-  const { error, value } = contenidoSchema.validate(req.body)
+  const { error, value } = contenidoSchemaPost.validate(req.body)
   if (error) {
     return res.status(400).json({ error: 'Datos inválidos', details: error.details.map(e => e.message).join(", ") })
   }
 
-  const { genero, busqueda, reparto, categoria_id, ...data } = value
-  const contenidoId = data.id
+  let { genero, busqueda, reparto, categoria_id, id, ...data } = value
 
-  // Si el id de la URL  req.params no es = al id de req.body devuelve error
-  if (Number(id) !== Number(contenidoId)) {
-    return res.status(400).json({ error: 'Datos inválidos. req.params.id y req.body.id no son iguales!' })
+  // Si no se proporciona el ID, buscar un ID libre en la tabla Contenido
+  if (!id) {
+    const maxId = await Contenido.max('id')
+    id = maxId ? maxId + 1 : 1
   }
 
   try {
     // Verificar si ya existe un contenido con el mismo ID
-    const existingContenido = await Contenido.findByPk(contenidoId)
+    const existingContenido = await Contenido.findByPk(id)
     if (existingContenido) {
       return res.status(409).json({
         message: "El registro ya existe. No se puede duplicar en la base de datos.",
@@ -234,7 +249,7 @@ const createContenido = async (req, res) => {
 
     const contenido = await sequelize.transaction(async (t) => {
       const newContenido = await Contenido.create(
-        { ...data, categoria_id: categoriaIds[0] },
+        { ...data, id, categoria_id: categoriaIds[0] },
         { transaction: t }
       )
       await newContenido.addReparto(repartoIds, { transaction: t })
@@ -255,7 +270,7 @@ const createContenido = async (req, res) => {
 const updateContenido = async (req, res) => {
   // Validación de los datos de entrada
   const { id } = req.params  // ID del contenido a actualizar desde la URL
-  const { error, value } = contenidoSchema.validate(req.body)
+  const { error, value } = contenidoSchemaPut.validate(req.body)
   if (error) {
     return res.status(400).json({ error: 'Datos inválidos', details: error.details.map(e => e.message).join(", ") })
   }
@@ -309,8 +324,6 @@ const updateContenido = async (req, res) => {
 const patchContenido = async (req, res) => {
   // Validación de los datos de entrada
   const { id } = req.params // ID del contenido a actualizar desde la URL
-  //  const { genero, busqueda, reparto, categoria_id, ...data } = req.body // Solo toma los datos que se pasan en la solicitud
-  //  const { error, value } = contenidoSchemaPatch.validate(data, { abortEarly: false }) // Se valida solo los datos proporcionados
   const { error, value } = contenidoSchemaPatch.validate(req.body, { abortEarly: false }) // Se valida solo los datos proporcionados
   if (error) {
     return res.status(400).json({ error: 'Datos inválidos', details: error.details.map(e => e.message).join(", ") })

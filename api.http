@@ -21,6 +21,7 @@ GET http://localhost:3000/apicontenido/contenido/74
 ### Get contenido por Id y relaciones full
 GET http://localhost:3000/apicontenido/contenido/74/full
 
+
 ### Get contenidos por Id de actor
 # Todas la obras de un actor en particular
 GET http://localhost:3000/apicontenido/contenido/actor/2
@@ -60,7 +61,7 @@ GET {{baseUrl}}/contenido?genero={{genero}}
 
 ### Crear un contenido.
 # En este caso, ya eiste y da: HTTP/1.1 409 Conflict
-POST http://localhost:3000/apicontenido/contenido/17
+POST http://localhost:3000/apicontenido/contenido/
 Content-Type: application/json
 
   {
@@ -99,11 +100,17 @@ Content-Type: application/json
     "duracion": 0
   }
 
-### Crear un contenido. 
+# Crear un contenido.
+# No acepta parámetros 
+# Si se pasa el ID en el body, trata de usarlo, si existe da error. 
+# Si no se pasa el ID en el body, busca un id libre.
 # permite usar ID o Nombres/Terminos para las relaciones.
 # Si uno de los Id de relaciones no existe en la DB da un error
-# y si se pasa una descripción, se la da de alta en la tabla correspondiemnte.
-POST http://localhost:3000/apicontenido/contenido/101
+# y si se pasa una descripción, se la busca en su tabla y si no existe,
+# se la da de alta en la tabla correspondiemnte.
+
+### CASO CON ID !!!
+POST http://localhost:3000/apicontenido/contenido/
 Content-Type: application/json
 
 {
@@ -113,20 +120,50 @@ Content-Type: application/json
   "categoria_id": "Película",
   "genero": [2, 12, 13, "Dálmatas"],
   "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, 1128, "101 dálmatas"],
-  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
+  "resumen": "Los Dálmatas son 101",
   "temporadas": 0,
   "duracion": 101,
-  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
+  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834, "Perros Dálmatas"],
   "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
 }   
+
+### Get contenido por Id y relaciones full
+GET http://localhost:3000/apicontenido/contenido/101/full
 
 ### Get contenido por Id con array numérico en relaciones
 GET http://localhost:3000/apicontenido/contenido/101
 
 
+### CASO SIN ID !!!
+POST http://localhost:3000/apicontenido/contenido/
+Content-Type: application/json
+
+{
+  "id": 0,
+  "poster": "./posters/10x.jpg",
+  "titulo": "10x dalmatas",
+  "categoria_id": "Película",
+  "genero": [2, 12, 13, "Dálmatas"],
+  "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, 1128, "10x dálmatas"],
+  "resumen": "Los Dálmatas son cualquier ID",
+  "temporadas": 0,
+  "duracion": 101,
+  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834, "Perros Dálmatas"],
+  "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
+}   
+
+### Get contenido por Id y relaciones full
+GET http://localhost:3000/apicontenido/contenido/102/full
+
+
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/102
+
+
 ### Actualizar un contenido. COMPLETO !!!
 # Para este caso, cambia el nonmbre, duracion y 
 # se saca de busqueda el id:1128 !!!
+# Si el id de params no coincide con el elemento "id":, da un error!
 PUT http://localhost:3000/apicontenido/contenido/101
 Content-Type: application/json
 
@@ -137,7 +174,7 @@ Content-Type: application/json
   "categoria_id": "Película",
   "genero": [2, 12, 13, "Dálmatas"],
   "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, "101 dálmatas"],
-  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
+  "resumen": "Los Dálmatas son 101 (PUT)",
   "temporadas": 0,
   "duracion": 102,
   "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
@@ -150,13 +187,12 @@ Content-Type: application/json
 # "duracion": 102
 # se quitó el id:1128 en busqueda
 ##################################################################
-#
 #{
 #  "id": 101,
 #  "poster": "./posters/101.jpg",
 #  "titulo": "101 dálmatas con manchas NEGRAS",
 #  "categoria_id": 2,
-#  "resumen": "El delirante y gótico estilo de vida de la peculiar familia Addams se ve amenazado peligrosamente cuando el codicioso dúo que forman madre e hijo, con la ayuda de un abogado sin ningún escrúpulos, conspiran para hacerse con la fortuna familiar... (No se pierdan las locutras de Gomez, Morticia, Tío Lucas, Merlina, El tío Cosas, Dedos y Largo)",
+#  "resumen": "Los Dálmatas son 101 (PUT)",
 #  "temporadas": 0,
 #  "duracion": 102,
 #  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
@@ -171,30 +207,50 @@ GET http://localhost:3000/apicontenido/contenido/101
 
 
 ##################################
-### Actualizar un contenidos parcialmente
-# se cambia "titulo": "101 dálmatas con manchas BLANCAS"
-# Solo porque Si y ya, hago que "id": sea obligatorio en el json, ya que lo toma de { id } = req.params
+# Actualizar un contenidos parcialmente
+# se cambia "titulo": "101 dálmatas con manchas BLANCAS II"
+# Hago que "id": sea obligatorio en el body y la URL  { id } = req.params
+#  y además deben coincidir para que no de un error.
 ##################################
 PATCH http://localhost:3000/apicontenido/contenido/101
 Content-Type: application/json
 
 {
   "id": 101,
-  "titulo": "101 dálmatas con manchas BLANCAS 2"
+  "titulo": "101 dálmatas con manchas BLANCAS II",
+  "resumen": "Los Dálmatas son 101 (PATCH)"
 }
 
 ### Get contenido por Id con array numérico en relaciones
 GET http://localhost:3000/apicontenido/contenido/101
 
+##################################
+# Actualizar un contenidos parcialmente con datos vacios
+# Da un error al mandar "titulo": "" sin datos, pero admite
+# "poster": "" ya que además de ser opcional permite nulo y "". 
+# Hago que "id": sea obligatorio en el body y la URL  { id } = req.params
+#  y además deben coincidir para que no de un error.
+##################################
 
-### Actualizar un contenidos parcialmente con datos vacios
+### CASO CON ERRORES
 PATCH http://localhost:3000/apicontenido/contenido/101
 Content-Type: application/json
 
 {
   "id": 101,
-  "poster": "./posters/102.jpg",
-  "titulo": "101 dálmatas con manchas BLANCAS con Validación PATCH"
+  "poster": "",
+  "titulo": ""
+}
+
+### CASO SIN ERRORES
+PATCH http://localhost:3000/apicontenido/contenido/101
+Content-Type: application/json
+
+{
+  "id": 101,
+  "poster": "",
+  "titulo": "101 dálmatas con manchas BLANCAS II",
+  "resumen": "Los Dálmatas son 101 (PATCH) SIN ERRORES"
 }
 
 ### Get contenido por Id con array numérico en relaciones
@@ -208,8 +264,14 @@ GET http://localhost:3000/apicontenido/contenido/101
 #  Delete !!!!!!!! OJO!
 ################################
 DELETE http://localhost:3000/apicontenido/contenido/101
+################################
+DELETE http://localhost:3000/apicontenido/contenido/102
 
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/101
 
+### Get contenido por Id con array numérico en relaciones
+GET http://localhost:3000/apicontenido/contenido/102
 
 
 
@@ -230,25 +292,33 @@ POST http://localhost:3000/apicontenido/generos
 Content-Type: application/json
 
 {
-  "nombre": "comi-tragico"
+  "nombre": "comi-trágico"
 }
 
 ### Get generos por Id
 GET http://localhost:3000/apicontenido/generos/23
 
 ### Get generos por Id
+GET http://localhost:3000/apicontenido/generos/24
+
+### Get generos por Id
 GET http://localhost:3000/apicontenido/generos/25
+
+### Get generos por Id
+GET http://localhost:3000/apicontenido/generos/26
+
 
 ### Actualizar un genero totalmente 
 PUT http://localhost:3000/apicontenido/generos/25
 Content-Type: application/json
 
 {
-  "nombre": "comi-tragico-griego"
+  "nombre": "comi-trágico-griego"
 }
 
 ### Delete generos por Id
-DELETE http://localhost:3000/apicontenido/generos/25
+# Si el genero está usado en la tabla contenido_generos, da un error!
+DELETE http://localhost:3000/apicontenido/generos/26
 
 
 
@@ -324,7 +394,7 @@ DELETE http://localhost:3000/apicontenido/categorias/3
 GET http://localhost:3000/apicontenido/actores
 
 ### Get actor por Id
-GET http://localhost:3000/apicontenido/actores/30
+GET http://localhost:3000/apicontenido/actores/840
 
 ### Crear un actor
 POST http://localhost:3000/apicontenido/actores

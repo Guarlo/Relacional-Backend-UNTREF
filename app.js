@@ -42,7 +42,6 @@ app.use((req, res, next) => {
 // Middleware de manejo de errores
 //----------------------------------------------------------------
 app.use((err, req, res, next) => {
-  console.log("mdl errors!")
   res.status(err.status || 500).json({
     message: err.message,
     error: err.status

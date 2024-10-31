@@ -37,6 +37,8 @@ router.get('/actores', actoresController.getAllActors)
  * @swagger
  * /actores/{id}:
  *   get:
+ *     tags:
+ *       - Actores
  *     summary: Obtener un actor por ID
  *     description: Endpoint para obtener un actor específico por su ID.
  *     parameters:
@@ -201,15 +203,85 @@ router.delete('/actores/:id', actoresController.deleteActor)
  */
 router.get('/contenido/', contenidoController.getAllContenido)
 
-
-
+/**
+ * @swagger
+ * /contenido/actor/{id}:
+ *   get:
+ *     tags:
+ *       - Contenido
+ *     summary: Obtener un actor por ID y sus contenidos
+ *     description: Obtiene los detalles de un actor específico junto con todos los contenidos en los que participa.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único del actor
+ *     responses:
+ *       200:
+ *         description: Actor y sus contenidos obtenidos correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID único del actor
+ *                   example: 1
+ *                 nombre:
+ *                   type: string
+ *                   description: Nombre del actor
+ *                   example: "Tom Cruise"
+ *                 contenidos:
+ *                   type: array
+ *                   description: Lista de contenidos en los que participa el actor
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID único del contenido
+ *                         example: 1
+ *                       titulo:
+ *                         type: string
+ *                         description: Título del contenido
+ *                         example: "Misión Imposible"
+ *                       poster:
+ *                         type: string
+ *                         description: URL del póster del contenido
+ *                         example: "https://example.com/poster.jpg"
+ *                       resumen:
+ *                         type: string
+ *                         description: Resumen o descripción breve del contenido
+ *                         example: "Una historia de espionaje."
+ *                       temporadas:
+ *                         type: integer
+ *                         description: Número de temporadas (para series)
+ *                         example: 1
+ *                       duracion:
+ *                         type: integer
+ *                         description: Duración en minutos (para películas)
+ *                         example: 120
+ *                       trailer:
+ *                         type: string
+ *                         description: URL del trailer del contenido
+ *                         example: "https://example.com/trailer.mp4"
+ *       404:
+ *         description: Actor no encontrado
+ *       500:
+ *         description: Error interno al obtener el actor y sus contenidos
+ */
 router.get('/contenido/actor/:id', contenidoController.getContenidoByIdActor)
 
 /**
  * @swagger
  * /contenido/{id}/full:
  *   get:
- *     summary: Obtener contenido detallado con información relacionada
+ *     tags:
+ *       - Contenido
+ *     summary: Obtener un contenido por ID con información relacionada detallada completa
  *     description: Endpoint para obtener el detalle completo de un contenido, incluyendo actores, géneros, términos de búsqueda y categoría.
  *     parameters:
  *       - in: path
@@ -289,9 +361,223 @@ router.get('/contenido/actor/:id', contenidoController.getContenidoByIdActor)
  */
 router.get('/contenido/:id/full', contenidoController.getByIdContenidoFull)
 
+/**
+ * @swagger
+ * /contenido/{id}:
+ *   get:
+ *     tags:
+ *       - Contenido
+ *     summary: Obtener un contenido por ID con sus datos relacionados en arrays con sus Ids
+ *     description: Obtiene un contenido específico por ID, incluyendo detalles completos de sus relaciones como reparto, género, categoría y términos de búsqueda.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único del contenido
+ *     responses:
+ *       200:
+ *         description: Contenido obtenido correctamente con todos sus datos relacionados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID único del contenido
+ *                   example: 1
+ *                 titulo:
+ *                   type: string
+ *                   description: Título del contenido
+ *                   example: "Misión Imposible"
+ *                 poster:
+ *                   type: string
+ *                   description: URL del póster del contenido
+ *                   example: "https://example.com/poster.jpg"
+ *                 resumen:
+ *                   type: string
+ *                   description: Resumen o descripción breve del contenido
+ *                   example: "Una historia de espionaje."
+ *                 temporadas:
+ *                   type: integer
+ *                   description: Número de temporadas (para series)
+ *                   example: 1
+ *                 duracion:
+ *                   type: integer
+ *                   description: Duración en minutos (para películas)
+ *                   example: 120
+ *                 trailer:
+ *                   type: string
+ *                   description: URL del trailer del contenido
+ *                   example: "https://example.com/trailer.mp4"
+ *                 reparto:
+ *                   type: array
+ *                   description: Lista de actores en el contenido
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       nombre:
+ *                         type: string
+ *                         description: Nombre del actor
+ *                         example: "Tom Cruise"
+ *                 genero:
+ *                   type: array
+ *                   description: Lista de géneros asociados al contenido
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       nombre:
+ *                         type: string
+ *                         description: Nombre del género
+ *                         example: "Acción"
+ *                 busqueda:
+ *                   type: array
+ *                   description: Lista de términos de búsqueda asociados al contenido
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       termino:
+ *                         type: string
+ *                         description: Término de búsqueda
+ *                         example: "Futurista"
+ *                 categoria:
+ *                   type: object
+ *                   description: Categoría del contenido
+ *                   properties:
+ *                     nombre:
+ *                       type: string
+ *                       description: Nombre de la categoría
+ *                       example: "Película"
+ *       404:
+ *         description: Contenido no encontrado
+ *       500:
+ *         description: Error interno al obtener el contenido y sus datos relacionados
+ */
 router.get('/contenido/:id', contenidoController.getByIdContenido)
 
-router.post('/contenido/:id', contenidoController.createContenido)
+/**
+ * @swagger
+ * /contenido/:
+ *   post:
+ *     summary: Crear un nuevo contenido
+ *     description: Crea un nuevo contenido en la plataforma, validando datos de entrada y manejando relaciones con categorías, géneros, búsquedas y reparto.
+ *     tags:
+ *       - Contenido
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID único del contenido (opcional, se generará automáticamente si no se proporciona).
+ *               titulo:
+ *                 type: string
+ *                 description: Título del contenido.
+ *                 example: "Expedientes Secretos X"
+ *               categoria_id:
+ *                 type: integer
+ *                 description: ID de la categoría del contenido (debe existir en la base de datos).
+ *                 example: 1
+ *               genero:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Géneros asociados al contenido.
+ *                 example: ["Ciencia Ficción", "Misterio"]
+ *               busqueda:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Términos de búsqueda asociados al contenido.
+ *                 example: ["investigación", "expedientes"]
+ *               reparto:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Actores principales asociados al contenido.
+ *                 example: ["David Duchovny", "Gillian Anderson"]
+ *               resumen:
+ *                 type: string
+ *                 description: Resumen o sinopsis del contenido.
+ *                 example: "Dos agentes del FBI investigan casos paranormales."
+ *               trailer:
+ *                 type: string
+ *                 description: URL del tráiler del contenido.
+ *                 example: "https://www.youtube.com/watch?v=example"
+ *               duracion:
+ *                 type: integer
+ *                 description: Duración del contenido en minutos.
+ *                 example: 380
+ *               temporadas:
+ *                 type: integer
+ *                 nullable: true
+ *                 description: Número de temporadas (null si es una película).
+ *                 example: 11
+ *               poster:
+ *                 type: string
+ *                 description: URL del póster del contenido.
+ *                 example: "https://www.example.com/poster.jpg"
+ *             required:
+ *               - titulo
+ *               - categoria_id
+ *               - resumen
+ *               - trailer
+ *               - poster
+ *     responses:
+ *       '201':
+ *         description: Contenido creado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Contenido'
+ *       '400':
+ *         description: Error de validación en los datos de entrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: string
+ *                   example: "categoria_id no encontrada, título requerido"
+ *       '409':
+ *         description: El contenido con el mismo ID ya existe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "El registro ya existe. No se puede duplicar en la base de datos."
+ *                 record:
+ *                   $ref: '#/components/schemas/Contenido'
+ *       '500':
+ *         description: Error interno del servidor al crear el contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al crear el contenido"
+ *                 details:
+ *                   type: string
+ *                   example: "Detalle del error interno"
+ */
+router.post('/contenido/', contenidoController.createContenido)
+
+//router.post('/contenido/:id', contenidoController.createContenido)
+
 router.put('/contenido/:id', contenidoController.updateContenido)
 router.patch('/contenido/:id', contenidoController.patchContenido)
 router.delete('/contenido/:id', contenidoController.deleteContenido)

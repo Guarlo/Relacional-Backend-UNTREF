@@ -94,7 +94,6 @@ const updateGenero = async (req, res) => {
     }
 }
 
-
 // Eliminar un género por ID
 const deleteGenero = async (req, res) => {
     const { id } = req.params
@@ -111,7 +110,11 @@ const deleteGenero = async (req, res) => {
             res.status(404).json({ error: 'Género no encontrado' })
         }
     } catch (error) {
-        res.status(500).json({ error: 'Error al eliminar el género' })
+        if (error.name === 'SequelizeForeignKeyConstraintError') {
+            res.status(409).json({ error: 'No se puede eliminar el género porque está relacionado con contenido existente' })
+        } else {
+            res.status(500).json({ error: 'Error al eliminar el género' })
+        }
     }
 }
 
