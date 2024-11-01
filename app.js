@@ -19,9 +19,8 @@ app.use(express.json())
 //----------------------------------------------------------------
 // Bienvenida
 //----------------------------------------------------------------
-app.get('/', (req, res, next) => {
-  res.status(200).redirect('http://localhost:3000/apicontenido')
-  next(err)
+app.get('/', (req, res) => { 
+  res.redirect(301, 'http://localhost:3000/apicontenido')
 })
 
 //----------------------------------------------------------------

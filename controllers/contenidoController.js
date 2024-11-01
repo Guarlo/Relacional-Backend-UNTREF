@@ -1,7 +1,6 @@
 const Joi = require('joi')
 const { sequelize, Contenido, Categoria, Actor, Genero, Busqueda, ContenidoActor, ContenidoBusqueda, ContenidoGenero } = require('../models')
 
-
 const contenidoSchemaPost = Joi.object({
   id: Joi.number().integer(),
   poster: Joi.string().max(255).allow(null, '').optional(),
@@ -81,7 +80,6 @@ const getAllContenido = async (req, res) => {
 
   try {
     const where = {}
-
     // Agregar filtro de categoría si se proporciona. Solo como ejemplo, categoria ya está en include = []
     //if (categoria) {
     //  where.categoria_id = categoria
@@ -95,8 +93,6 @@ const getAllContenido = async (req, res) => {
       reparto ? { model: Actor, as: 'reparto', where: { nombre: reparto }, attributes: ['nombre'] } : { model: Actor, as: 'reparto', attributes: ['nombre'] }
     ]
 
-    console.log(include)
-
     // Consultar los contenidos con los filtros aplicados
     const contenidos = await Contenido.findAll({
       where,
@@ -109,10 +105,10 @@ const getAllContenido = async (req, res) => {
   }
 }
 
-
 // Obtener un contenido por ID con validación
 const getByIdContenido = async (req, res) => {
   const { id } = req.params
+
   if (!Number.isInteger(Number(id)) || id <= 0) {
     return res.status(400).json({ error: 'ID inválido' })
   }
@@ -159,6 +155,11 @@ const getByIdContenido = async (req, res) => {
 // Obtener un contenidos por ID con validación de ID y sus datos relacinados completos.
 const getByIdContenidoFull = async (req, res) => {
   const { id } = req.params
+
+  if (!Number.isInteger(Number(id)) || id <= 0) {
+    return res.status(400).json({ error: 'ID inválido' })
+  }
+
   try {
     const contenido = await Contenido.findByPk(id,
       {
@@ -186,9 +187,12 @@ const getByIdContenidoFull = async (req, res) => {
         ]
       }
     )
+    if (!contenido) {
+      return res.status(404).json({ error: 'Contenido no encontrado' })
+    }
     res.status(201).json(contenido)
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener el contenido y sus actores', error })
+    res.status(500).json({ error: 'Error al obtener el contenido y sus relaciones', error })
   }
 }
 
@@ -196,7 +200,10 @@ const getByIdContenidoFull = async (req, res) => {
 const getContenidoByIdActor = async (req, res) => {
   const { id } = req.params
 
-  console.log(req.params)
+  if (!Number.isInteger(Number(id)) || id <= 0) {
+    return res.status(400).json({ error: 'ID inválido' })
+  }
+
   try {
     const actor = await Actor.findByPk(id,
       {
@@ -207,7 +214,7 @@ const getContenidoByIdActor = async (req, res) => {
     )
     res.status(201).json(actor)
   } catch (error) {
-    res.status(500).send({ error: 'no se pudo crear la peli' })
+    res.status(500).send({ error: 'No se pudo encontrar el contenidos para el actor' })
   }
 }
 
@@ -408,7 +415,6 @@ const deleteContenido = async (req, res) => {
       res.status(404).json({ error: 'Contenido no encontrado' })
     }
   } catch (error) {
-    console.error('Error al eliminar el contenido:', error)
     res.status(500).json({ error: 'Error al eliminar el contenido' })
   }
 }

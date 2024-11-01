@@ -1,18 +1,10 @@
 const express = require('express')
 const router = express.Router()
-//const contenidoController = require('../controllers/contenidoController.js')
-const actoresController = require('../controllers/actoresController.js')
-const categoriasController = require('../controllers/categoriasController.js')
+const actoresController = require('../controllers/actoresController')
+const categoriasController = require('../controllers/categoriasController')
 const contenidoController = require('../controllers/contenidoController')
 const generoController = require('../controllers/generoController')
 
-// Routes for CRUD
-// router.get('/', (req, res) => {
-//     // Get all content
-//     res.send('Hola mundo !')
-// })
-
-//router.get('/migrar', contenidoController.migrarTrailerflixJSON)
 
 router.get('/', (req, res) => {
     res.send('BIENVENIDO A LA API DE CONTENIDOS!')
@@ -30,6 +22,7 @@ router.get('/generos/:id', generoController.getByIdGenero)
 router.post('/generos', generoController.createGenero)
 router.put('/generos/:id', generoController.updateGenero)
 router.delete('/generos/:id', generoController.deleteGenero)
+
 
 router.get('/actores', actoresController.getAllActors)
 
@@ -576,10 +569,321 @@ router.get('/contenido/:id', contenidoController.getByIdContenido)
  */
 router.post('/contenido/', contenidoController.createContenido)
 
-//router.post('/contenido/:id', contenidoController.createContenido)
-
+/**
+ * @swagger
+ * /contenido/{id}:
+ *   put:
+ *     summary: Actualizar un contenido existente
+ *     description: Actualiza los datos de un contenido existente, validando los datos de entrada y gestionando relaciones con categorías, géneros, búsquedas y reparto.
+ *     tags:
+ *       - Contenido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del contenido a actualizar.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID del contenido (debe coincidir con el ID de la URL).
+ *               titulo:
+ *                 type: string
+ *                 description: Título del contenido.
+ *                 example: "Expedientes Secretos X"
+ *               categoria_id:
+ *                 type: integer
+ *                 description: ID de la categoría del contenido (debe existir en la base de datos).
+ *                 example: 1
+ *               genero:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Géneros asociados al contenido.
+ *                 example: ["Ciencia Ficción", "Misterio"]
+ *               busqueda:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Términos de búsqueda asociados al contenido.
+ *                 example: ["investigación", "expedientes"]
+ *               reparto:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Actores principales asociados al contenido.
+ *                 example: ["David Duchovny", "Gillian Anderson"]
+ *               resumen:
+ *                 type: string
+ *                 description: Resumen o sinopsis del contenido.
+ *                 example: "Dos agentes del FBI investigan casos paranormales."
+ *               trailer:
+ *                 type: string
+ *                 description: URL del tráiler del contenido.
+ *                 example: "https://www.youtube.com/watch?v=example"
+ *               duracion:
+ *                 type: integer
+ *                 description: Duración del contenido en minutos.
+ *                 example: 97
+ *               temporadas:
+ *                 type: integer
+ *                 nullable: true
+ *                 description: Número de temporadas (null si es una película).
+ *                 example: 11
+ *               poster:
+ *                 type: string
+ *                 description: URL del póster del contenido.
+ *                 example: "https://www.example.com/poster.jpg"
+ *             required:
+ *               - id
+ *               - titulo
+ *               - categoria_id
+ *               - resumen
+ *               - trailer
+ *               - poster
+ *     responses:
+ *       '200':
+ *         description: Contenido actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Contenido actualizado correctamente"
+ *                 contenido:
+ *                   $ref: '#/components/schemas/Contenido'
+ *       '400':
+ *         description: Error de validación en los datos de entrada o categoría no encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: string
+ *                   example: "Los IDs no coinciden, categoría no válida"
+ *       '404':
+ *         description: Contenido no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Contenido no encontrado"
+ *       '500':
+ *         description: Error interno del servidor al actualizar el contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al actualizar el contenido"
+ *                 details:
+ *                   type: string
+ *                   example: "Detalle del error interno"
+ */
 router.put('/contenido/:id', contenidoController.updateContenido)
+
+/**
+ * @swagger
+ * /contenido/{id}:
+ *   patch:
+ *     summary: Actualizar parcialmente un contenido existente
+ *     description: Actualiza campos específicos de un contenido existente, validando solo los datos proporcionados y gestionando relaciones con categorías, géneros, búsquedas y reparto según los cambios solicitados.
+ *     tags:
+ *       - Contenido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del contenido a actualizar.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID del contenido (debe coincidir con el ID de la URL).
+ *               titulo:
+ *                 type: string
+ *                 description: Título del contenido.
+ *                 example: "Expedientes Secretos X"
+ *               categoria_id:
+ *                 type: integer
+ *                 description: ID de la categoría del contenido, solo si se desea actualizar.
+ *                 example: 1
+ *               genero:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Géneros asociados al contenido, solo si se desean actualizar.
+ *                 example: ["Ciencia Ficción", "Misterio"]
+ *               busqueda:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Términos de búsqueda asociados al contenido, solo si se desean actualizar.
+ *                 example: ["investigación", "expedientes"]
+ *               reparto:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Actores principales asociados al contenido, solo si se desean actualizar.
+ *                 example: ["David Duchovny", "Gillian Anderson"]
+ *               resumen:
+ *                 type: string
+ *                 description: Resumen o sinopsis del contenido.
+ *                 example: "Dos agentes del FBI investigan casos paranormales."
+ *               trailer:
+ *                 type: string
+ *                 description: URL del tráiler del contenido.
+ *                 example: "https://www.youtube.com/watch?v=example"
+ *               duracion:
+ *                 type: integer
+ *                 description: Duración del contenido en minutos.
+ *                 example: 97
+ *               temporadas:
+ *                 type: integer
+ *                 nullable: true
+ *                 description: Número de temporadas (null si es una película).
+ *                 example: 11
+ *               poster:
+ *                 type: string
+ *                 description: URL del póster del contenido.
+ *                 example: "https://www.example.com/poster.jpg"
+ *     responses:
+ *       '200':
+ *         description: Contenido actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Contenido actualizado correctamente"
+ *                 contenido:
+ *                   $ref: '#/components/schemas/Contenido'
+ *       '400':
+ *         description: Error de validación en los datos de entrada o categoría no encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: string
+ *                   example: "IDs no coinciden o categoría inválida"
+ *       '404':
+ *         description: Contenido no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Contenido no encontrado"
+ *       '500':
+ *         description: Error interno del servidor al actualizar el contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al actualizar el contenido"
+ *                 details:
+ *                   type: string
+ *                   example: "Detalle del error interno"
+ */
 router.patch('/contenido/:id', contenidoController.patchContenido)
+
+/**
+ * @swagger
+ * /contenido/{id}:
+ *   delete:
+ *     summary: Eliminar un contenido existente
+ *     description: Elimina un contenido y sus relaciones asociadas en las tablas de unión (géneros, búsquedas y reparto).
+ *     tags:
+ *       - Contenido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del contenido a eliminar.
+ *     responses:
+ *       '200':
+ *         description: Contenido eliminado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Contenido eliminado correctamente"
+ *       '204':
+ *         description: Contenido eliminado sin contenido en la respuesta.
+ *       '400':
+ *         description: ID inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID inválido"
+ *       '404':
+ *         description: Contenido no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Contenido no encontrado"
+ *       '500':
+ *         description: Error interno del servidor al intentar eliminar el contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al eliminar el contenido"
+ */
 router.delete('/contenido/:id', contenidoController.deleteContenido)
 
 // Middleware para manejar rutas inválidas

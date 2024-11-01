@@ -24,7 +24,7 @@ GET http://localhost:3000/apicontenido/contenido/74/full
 
 ### Get contenidos por Id de actor
 # Todas la obras de un actor en particular
-GET http://localhost:3000/apicontenido/contenido/actor/2
+GET http://localhost:3000/apicontenido/contenido/actor/844
 
 
 ### Get de todos los contenidos. Sin discriminar!
@@ -445,7 +445,7 @@ Content-Type: application/json
 GET http://localhost:3000/apicontenido/generos
 
 ### Get genero por Id
-GET http://localhost:3000/apicontenido/generos/20
+GET http://localhost:3000/apicontenido/generos/40
 
 
 ### Get genero por Id y sus contenidos

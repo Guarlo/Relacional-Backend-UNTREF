@@ -124,7 +124,7 @@ Aquí es donde se encuentra toda la funcionalidad que puede proveer la API para 
 
 ```plaintext
 /database/
-  - Linpiar DB trailerflix.sql
+  - Limpiar DB trailerflix.sql
   - trailerflixDump20241029_completa.sql
   - trailerflixDump20241029_datos.sql
   - trailerflixDump20241029_estructura.sql
@@ -181,7 +181,7 @@ Aquí es donde se encuentra toda la funcionalidad que puede proveer la API para 
 
 Este proyecto permite aplicar conceptos claves de desarrollo backend, diseño de bases de datos y documentación. 
 
-Este es un desafío para mí! Volver a estudiar a este nivel universitario después de treinta años de mis primeros pasos en el mundo de sistemas.
+Ésto es un desafío para mí. Volver a estudiar a este nivel universitario, después de treinta años de mis primeros pasos en el mundo de sistemas, es una gran satisfacción!
 
 "Gracias a todos los docentes por la calidad humana y el profesionalismo!"
 
