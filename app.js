@@ -1,4 +1,8 @@
-process.loadEnvFile()
+//process.loadEnvFile()
+const dotenv = require('dotenv')
+//dotenv.config({ path: `.env.${ENV}` })
+dotenv.config({ path: `.env` })
+
 const morgan = require('morgan')
 const express = require('express')
 const app = express()
