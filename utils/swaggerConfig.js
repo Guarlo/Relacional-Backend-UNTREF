@@ -11,7 +11,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000/apicontenido',
+        url: process.env.SWAGGUER_SERVER_URL
       }
     ],
     components: {

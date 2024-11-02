@@ -13,7 +13,7 @@ const getAllGeneros = async (req, res) => {
         const generos = await Genero.findAll()
         res.status(200).json(generos)
     } catch (error) {
-        res.status(500).json({ error: 'No se pudieron obtener los géneros' })
+        res.status(500).json({ error: 'No se pudieron obtener los géneros', detalle: error })
     }
 }
 

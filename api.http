@@ -1,14 +1,14 @@
+#Servidores 
 @baseUrl = http://localhost:3000/apicontenido
-
+#@baseUrl = https://relacional-backend-untref-production.up.railway.app/apicontenido
 
 
 ### Bienvenida
 GET http://localhost:3000/
 
 ### Bienvenida
-GET http://localhost:3000/apicontenido/
-
-
+#GET https://relacional-backend-untref-production.up.railway.app/apicontenido/
+GET {{baseUrl}}/
 
 ################################
 ##  CONTENIDO
@@ -16,15 +16,15 @@ GET http://localhost:3000/apicontenido/
 
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/74
+GET {{baseUrl}}/contenido/74
 
 ### Get contenido por Id y relaciones full
-GET http://localhost:3000/apicontenido/contenido/74/full
+GET {{baseUrl}}/contenido/74/full
 
 
 ### Get contenidos por Id de actor
 # Todas la obras de un actor en particular
-GET http://localhost:3000/apicontenido/contenido/actor/844
+GET {{baseUrl}}/contenido/actor/844
 
 
 ### Get de todos los contenidos. Sin discriminar!
@@ -61,7 +61,7 @@ GET {{baseUrl}}/contenido?genero={{genero}}
 
 ### Crear un contenido.
 # En este caso, ya eiste y da: HTTP/1.1 409 Conflict
-POST http://localhost:3000/apicontenido/contenido/
+POST {{baseUrl}}/contenido/
 Content-Type: application/json
 
   {
@@ -110,7 +110,7 @@ Content-Type: application/json
 # se la da de alta en la tabla correspondiemnte.
 
 ### CASO CON ID !!!
-POST http://localhost:3000/apicontenido/contenido/
+POST {{baseUrl}}/contenido/
 Content-Type: application/json
 
 {
@@ -128,14 +128,14 @@ Content-Type: application/json
 }   
 
 ### Get contenido por Id y relaciones full
-GET http://localhost:3000/apicontenido/contenido/101/full
+GET {{baseUrl}}/contenido/101/full
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/101
+GET {{baseUrl}}/contenido/101
 
 
 ### CASO SIN ID !!!
-POST http://localhost:3000/apicontenido/contenido/
+POST {{baseUrl}}/contenido/
 Content-Type: application/json
 
 {
@@ -153,18 +153,18 @@ Content-Type: application/json
 }   
 
 ### Get contenido por Id y relaciones full
-GET http://localhost:3000/apicontenido/contenido/102/full
+GET {{baseUrl}}/contenido/102/full
 
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/102
+GET {{baseUrl}}/contenido/102
 
 
 ### Actualizar un contenido. COMPLETO !!!
 # Para este caso, cambia el nonmbre, duracion y 
 # se saca de busqueda el id:1128 !!!
 # Si el id de params no coincide con el elemento "id":, da un error!
-PUT http://localhost:3000/apicontenido/contenido/101
+PUT {{baseUrl}}/contenido/101
 Content-Type: application/json
 
 {
@@ -203,7 +203,7 @@ Content-Type: application/json
 
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/101
+GET {{baseUrl}}/contenido/101
 
 
 ##################################
@@ -212,7 +212,7 @@ GET http://localhost:3000/apicontenido/contenido/101
 # Hago que "id": sea obligatorio en el body y la URL  { id } = req.params
 #  y además deben coincidir para que no de un error.
 ##################################
-PATCH http://localhost:3000/apicontenido/contenido/101
+PATCH {{baseUrl}}/contenido/101
 Content-Type: application/json
 
 {
@@ -222,7 +222,7 @@ Content-Type: application/json
 }
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/101
+GET {{baseUrl}}/contenido/101
 
 ##################################
 # Actualizar un contenidos parcialmente con datos vacios
@@ -233,7 +233,7 @@ GET http://localhost:3000/apicontenido/contenido/101
 ##################################
 
 ### CASO CON ERRORES
-PATCH http://localhost:3000/apicontenido/contenido/101
+PATCH {{baseUrl}}/contenido/101
 Content-Type: application/json
 
 {
@@ -243,7 +243,7 @@ Content-Type: application/json
 }
 
 ### CASO SIN ERRORES
-PATCH http://localhost:3000/apicontenido/contenido/101
+PATCH {{baseUrl}}/contenido/101
 Content-Type: application/json
 
 {
@@ -254,7 +254,7 @@ Content-Type: application/json
 }
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/101
+GET {{baseUrl}}/contenido/101
 
 
 
@@ -263,15 +263,15 @@ GET http://localhost:3000/apicontenido/contenido/101
 ################################
 #  Delete !!!!!!!! OJO!
 ################################
-DELETE http://localhost:3000/apicontenido/contenido/101
+DELETE {{baseUrl}}/contenido/101
 ################################
-DELETE http://localhost:3000/apicontenido/contenido/102
+DELETE {{baseUrl}}/contenido/102
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/101
+GET {{baseUrl}}/contenido/101
 
 ### Get contenido por Id con array numérico en relaciones
-GET http://localhost:3000/apicontenido/contenido/102
+GET {{baseUrl}}/contenido/102
 
 
 
@@ -281,14 +281,14 @@ GET http://localhost:3000/apicontenido/contenido/102
 ################################
 
 ### Get de todos los generos
-GET http://localhost:3000/apicontenido/generos
+GET {{baseUrl}}/generos
 
 ### Get generos por Id
-GET http://localhost:3000/apicontenido/generos/24
+GET {{baseUrl}}/generos/35
 
 
 ### Crear un genero
-POST http://localhost:3000/apicontenido/generos
+POST {{baseUrl}}/generos
 Content-Type: application/json
 
 {
@@ -296,20 +296,20 @@ Content-Type: application/json
 }
 
 ### Get generos por Id
-GET http://localhost:3000/apicontenido/generos/23
+GET {{baseUrl}}/generos/23
 
 ### Get generos por Id
-GET http://localhost:3000/apicontenido/generos/24
+GET {{baseUrl}}/generos/24
 
 ### Get generos por Id
-GET http://localhost:3000/apicontenido/generos/25
+GET {{baseUrl}}/generos/25
 
 ### Get generos por Id
-GET http://localhost:3000/apicontenido/generos/26
+GET {{baseUrl}}/generos/26
 
 
 ### Actualizar un genero totalmente 
-PUT http://localhost:3000/apicontenido/generos/25
+PUT {{baseUrl}}/generos/25
 Content-Type: application/json
 
 {
@@ -318,7 +318,7 @@ Content-Type: application/json
 
 ### Delete generos por Id
 # Si el genero está usado en la tabla contenido_generos, da un error!
-DELETE http://localhost:3000/apicontenido/generos/26
+DELETE {{baseUrl}}/generos/26
 
 
 
@@ -332,13 +332,13 @@ DELETE http://localhost:3000/apicontenido/generos/26
 
 
 ### Get de todos las categorias
-GET http://localhost:3000/apicontenido/categorias
+GET {{baseUrl}}/categorias
 
 ### Get categorias por Id
-GET http://localhost:3000/apicontenido/categorias/2
+GET {{baseUrl}}/categorias/2
 
 ### Crear una categorias
-POST http://localhost:3000/apicontenido/categorias
+POST {{baseUrl}}/categorias
 Content-Type: application/json
 
 {
@@ -346,7 +346,7 @@ Content-Type: application/json
 }
 
 ### Actualizar una categorias totalmente 
-PUT http://localhost:3000/apicontenido/categorias/3
+PUT {{baseUrl}}/categorias/3
 Content-Type: application/json
 
 {
@@ -354,7 +354,7 @@ Content-Type: application/json
 }
 
 ### Actualizar una categorias parcialmente
-PATCH http://localhost:3000/apicontenido/categorias/3
+PATCH {{baseUrl}}/categorias/3
 Content-Type: application/json
 
 {
@@ -362,7 +362,7 @@ Content-Type: application/json
 }
 
 ### Actualizar una categorias parcialmente con datos invalidos
-PATCH http://localhost:3000/apicontenido/categorias/3
+PATCH {{baseUrl}}/categorias/3
 Content-Type: application/json
 
 {
@@ -370,7 +370,7 @@ Content-Type: application/json
 }
 
 ### Actualizar una categorias parcialmente con datos vacios
-PATCH http://localhost:3000/apicontenido/categorias/3
+PATCH {{baseUrl}}/categorias/3
 Content-Type: application/json
 
 {
@@ -378,7 +378,7 @@ Content-Type: application/json
 }
 
 ### DELETE categorias por Id
-DELETE http://localhost:3000/apicontenido/categorias/3
+DELETE {{baseUrl}}/categorias/3
 
 
 
@@ -391,13 +391,13 @@ DELETE http://localhost:3000/apicontenido/categorias/3
 ################################
 
 ### Get de todos los actores
-GET http://localhost:3000/apicontenido/actores
+GET {{baseUrl}}/actores
 
 ### Get actor por Id
-GET http://localhost:3000/apicontenido/actores/840
+GET {{baseUrl}}/actores/840
 
 ### Crear un actor
-POST http://localhost:3000/apicontenido/actores
+POST {{baseUrl}}/actores
 Content-Type: application/json
 
 {
@@ -405,7 +405,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un actor totalmente 
-PUT http://localhost:3000/apicontenido/actores/840
+PUT {{baseUrl}}/actores/840
 Content-Type: application/json
 
 {
@@ -413,7 +413,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un actor parcialmente
-PATCH http://localhost:3000/apicontenido/actores/840
+PATCH {{baseUrl}}/actores/840
 Content-Type: application/json
 
 {
@@ -421,7 +421,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un actor parcialmente con datos invalidos
-PATCH http://localhost:3000/apicontenido/actores/840
+PATCH {{baseUrl}}/actores/840
 Content-Type: application/json
 
 {
@@ -429,7 +429,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un actor parcialmente con datos vacios
-PATCH http://localhost:3000/apicontenido/actores/840
+PATCH {{baseUrl}}/actores/840
 Content-Type: application/json
 
 {
@@ -442,18 +442,18 @@ Content-Type: application/json
 ################################
 
 ### Get de todos los generos
-GET http://localhost:3000/apicontenido/generos
+GET {{baseUrl}}/generos
 
 ### Get genero por Id
-GET http://localhost:3000/apicontenido/generos/40
+GET {{baseUrl}}/generos/40
 
 
 ### Get genero por Id y sus contenidos
-GET http://localhost:3000/apicontenido/generos/30/contenido 
+GET {{baseUrl}}/generos/30/contenido 
 
 
 ### Crear un genero
-POST http://localhost:3000/apicontenido/generos
+POST {{baseUrl}}/generos
 Content-Type: application/json
 
 {
@@ -461,7 +461,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un genero totalmente 
-PUT http://localhost:3000/apicontenido/generos/20
+PUT {{baseUrl}}/generos/20
 Content-Type: application/json
 
 {
@@ -469,7 +469,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un genero parcialmente
-PATCH http://localhost:3000/apicontenido/generos/20
+PATCH {{baseUrl}}/generos/20
 Content-Type: application/json
 
 {
@@ -477,7 +477,7 @@ Content-Type: application/json
 }
 
 ### Actualizar un genero parcialmente con datos vacios
-PATCH http://localhost:3000/apicontenido/generos/840
+PATCH {{baseUrl}}/generos/840
 Content-Type: application/json
 
 {
