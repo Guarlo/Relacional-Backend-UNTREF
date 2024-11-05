@@ -918,7 +918,7 @@ router.post('/contenido/', contenidoController.createContenido)
  * @swagger
  * /contenido/{id}:
  *   put:
- *     summary: Actualizar un contenido existente
+ *     summary: Actualizar totalmente un contenido, agregando relaciones y borrando las existentes no informadas!
  *     description: Actualiza los datos de un contenido existente, validando los datos de entrada y gestionando relaciones con categorías, géneros, búsquedas y reparto.
  *     tags:
  *       - Contenido
@@ -1049,7 +1049,7 @@ router.put('/contenido/:id', contenidoController.updateContenido)
  * @swagger
  * /contenido/{id}:
  *   patch:
- *     summary: Actualizar parcialmente un contenido existente
+ *     summary: Actualizar parcialmente un contenido, agregando relaciones y borrando las existentes no informadas!
  *     description: Actualiza campos específicos de un contenido existente, validando solo los datos proporcionados y gestionando relaciones con categorías, géneros, búsquedas y reparto según los cambios solicitados.
  *     tags:
  *       - Contenido
@@ -1173,7 +1173,7 @@ router.patch('/contenido/:id', contenidoController.patchContenido)
  * @swagger
  * /contenido/agregar_relaciones/{id}:
  *   patch:
- *     summary: Actualizar parcialmente un contenido y agregar relaciones sin reemplazarlas
+ *     summary: Actualizar parcialmente un contenido y agregar relaciones sin afectar las existentes
  *     description: Actualiza datos parciales de un contenido existente y agrega relaciones en géneros, búsquedas y reparto evitando duplicados.
  *     tags:
  *       - Contenido
@@ -1271,7 +1271,7 @@ router.patch('/contenido/agregar_relaciones/:id', contenidoController.patchConte
  * @swagger
  * /contenido/eliminar_relaciones/{id}:
  *   patch:
- *     summary: Eliminar relaciones de un contenido existente
+ *     summary: Eliminar relaciones de un contenido sin afectar otras existentes
  *     description: Permite eliminar relaciones específicas (géneros, términos de búsqueda y reparto) de un contenido sin afectar otras relaciones.
  *     tags:
  *       - Contenido
@@ -1432,8 +1432,6 @@ router.patch('/contenido/eliminar_relaciones/:id', contenidoController.patchCont
  *                   example: "Error al eliminar el contenido"
  */
 router.delete('/contenido/:id', contenidoController.deleteContenido)
-
-
 
 
 // Middleware para manejar rutas inválidas
