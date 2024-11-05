@@ -13,8 +13,12 @@ const partialActorSchema = Joi.object({
 // Obtener todos los actores
 const getAllActors = async (req, res) => {
     try {
-        const actors = await Actor.findAll()
-        res.status(200).json(actors)
+        const actores = await Actor.findAll()
+        if (actores) {
+            res.status(200).json(actores)
+        } else {
+            res.status(404).json({ error: 'Actores no encontrados' })
+        }
     } catch (error) {
         res.status(500).json({ error: 'No se pudieron traer los actores' })
     }
@@ -50,7 +54,12 @@ const createActor = async (req, res) => {
 
     try {
         const newActor = await Actor.create(req.body)
-        res.status(201).json(newActor)
+        if (newActor) {
+            res.status(201).json(newActor)
+        } else {
+            res.status(400).json({ error: 'Actor no creado!' })
+        }
+
     } catch (error) {
         res.status(400).json({ error: 'Error al crear el actor' })
     }

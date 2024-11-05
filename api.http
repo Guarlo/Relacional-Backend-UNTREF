@@ -122,12 +122,12 @@ Content-Type: application/json
   "poster": "./posters/101.jpg",
   "titulo": "101 dalmatas",
   "categoria_id": "Película",
-  "genero": [2, 12, 13, "Dálmatas"],
-  "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, 1128, "101 dálmatas"],
+  "genero": [2, 12, 13],
+  "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, 1128],
   "resumen": "Los Dálmatas son 101",
   "temporadas": 0,
   "duracion": 101,
-  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834, "Perros Dálmatas"],
+  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
   "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
 }   
 
@@ -166,9 +166,17 @@ GET {{baseUrl}}/contenido/102
 
 ### Get contenido por Id con array numérico en relaciones
 GET {{baseUrl}}/contenido/101
+
 ### Actualizar un contenido. COMPLETO !!!
-# Para este caso, cambia el nonmbre, duracion y 
-# se saca de busqueda el id:1128 !!!
+####################################################################
+# Resultados pos PUT
+# "titulo": "101 dálmatas con manchas NEGRAS",
+# "duracion": 102
+# "resumen": "Los Dálmatas son 101 (PUT)",
+# se quitó el id:13 en genero y agrega "Dálmatas" 
+# se quitó el id:1128 en busqueda y agrega "101 dálmatas"
+# se quitó el id:834 en reparto y agrega "Perros Dálmatas"
+##################################################################
 # Si el id de params no coincide con el elemento "id":, da un error!
 PUT {{baseUrl}}/contenido/101
 Content-Type: application/json
@@ -188,14 +196,8 @@ Content-Type: application/json
 }   
 
 ####################################################################
-# Resultados pos PUT
-# "titulo": "101 dálmatas con manchas NEGRAS",
-# "duracion": 102
-# "resumen": "Los Dálmatas son 101 (PUT)",
-# se quitó el id:13 en genero
-# se quitó el id:1128 en busqueda
-# se quitó el id:834 en reparto
-##################################################################
+# NUEVO Contenido
+####################################################################
 #{
 #  "id": 101,
 #  "poster": "./posters/101.jpg",
@@ -207,7 +209,7 @@ Content-Type: application/json
 #  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
 #  "generoIds": [ 2, 12, 26 ],
 #  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
-#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 840 ]
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 842 ]
 #}
 
 ### Get contenido por Id con array numérico en relaciones
@@ -266,15 +268,15 @@ GET {{baseUrl}}/contenido/101
 
 ##################################
 ### Agrega solo nuevas relaciones a Contenido
-#Categoríapasa a "Serie"
+# Categoríapasa a "Serie"
 # "categoria_id": "Serie",  
-#Generos
+# Generos
 # Agrego {"id": 9, "nombre": "Suspenso" } por id
 # Agrego {"id": 15, "nombre": "Tecnología"} por nombre
-#Busquedas
+# Busquedas
 # Agrego {"id": 4, "nombre": "Suspenso" } por nombre
 # Agrego {"id": 5, "nombre": "Carl Weathers"} por id 
-#Reparto
+# Reparto
 # Agrego {"id": 109, "nombre": "Aaron Paul" } por nombre
 # Agrego {"id": 297, "nombre": "Adam Cozens"} por id 
 ##################################
@@ -304,7 +306,7 @@ Content-Type: application/json
 #  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
 #  "generoIds": [ 2, 12, 26 ],
 #  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
-#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 840 ]
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 842 ]
 
 #}
 # DESPUES
@@ -318,13 +320,59 @@ Content-Type: application/json
 #  "temporadas": 0,
 #  "duracion": 102,
 #  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
-#  "generoIds": [ 2, 12, 26 ],
+#  "generoIds": [ 2, 9, 12, 15, 26 ],
 #       --->  Se suma (9 y 15)
-#  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
+#  "busquedaIds": [ 3, 4, 5, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
 #       --->  Se suma (5 y 4)
-#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 840 ]
+#  "repartoIds": [ 109, 297, 826, 827, 828, 829, 830, 831, 832, 833, 842 ]
 #       --->  Se suma (109 y 297)
 #}
+
+### Get contenido por Id con array numérico en relaciones
+GET {{baseUrl}}/contenido/101
+
+##################################
+### Eliminar relaciones a Contenido
+# Generos
+# Agrego {"id": 9, "nombre": "Suspenso" } por id
+# Agrego {"id": 15, "nombre": "Tecnología"} por nombre
+# Busquedas
+# Agrego {"id": 4, "nombre": "Suspenso" } por nombre
+# Agrego {"id": 5, "nombre": "Carl Weathers"} por id 
+# Reparto
+# Agrego {"id": 109, "nombre": "Aaron Paul" } por nombre
+# Agrego {"id": 297, "nombre": "Adam Cozens"} por id 
+##################################
+PATCH {{baseUrl}}/contenido/eliminar_relaciones/101             
+Content-Type: application/json
+
+{
+  "id": 101,
+  "genero": [9, "Tecnología"],
+  "busqueda": [5, "Suspenso"],
+  "reparto": [297, "Aaron Paul"]
+}   
+
+####################################################################
+# Resultados pos PATCH
+##################################################################
+# DEBERIA QUEDAR COMO ANTES 
+#{
+#  "id": 101,
+#  "poster": "./posters/101.jpg",
+#  "titulo": "101 dálmatas con manchas NEGRAS",
+#  "categoria_id": 2,
+#  "resumen": "Los Dálmatas son 101 (PUT)",
+#  "temporadas": 0,
+#  "duracion": 102,
+#  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
+#  "generoIds": [ 2, 12, 26 ],
+#       --->  Se quita (9 y 15)
+#  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
+#       --->  Se quita (4 y 5)
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 842 ]
+#       --->  Se quita (109 y 297)
+
 
 ### Get contenido por Id con array numérico en relaciones
 GET {{baseUrl}}/contenido/101
@@ -532,11 +580,14 @@ Content-Type: application/json
   "nombre": ""
 }
 
-### DELETE categorias por Id (No permitido)
+
+### Get actor por Id
+GET {{baseUrl}}/actores/109
+
+### DELEte actores por Id (No permitido)
 # Con detección de error "SequelizeForeignKeyConstraintError"
 # 
-DELETE {{baseUrl}}/actores/19999
-
+DELETE {{baseUrl}}/actores/109
 
 
 

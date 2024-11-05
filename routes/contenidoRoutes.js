@@ -10,6 +10,16 @@ router.get('/', (req, res) => {
     res.send('BIENVENIDO A LA API DE CONTENIDOS!')
 })
 
+
+//********************************************************************************
+// BUSQUWDAS
+//********************************************************************************
+
+
+
+//********************************************************************************
+// CATEGORIAS
+//********************************************************************************
 router.get('/categorias', categoriasController.getAllCategorias)
 router.get('/categorias/:id', categoriasController.getByIdCategoria)
 router.post('/categorias', categoriasController.createCategoria)
@@ -17,6 +27,9 @@ router.put('/categorias/:id', categoriasController.updateCategoria)
 router.patch('/categorias/:id', categoriasController.patchCategoria)
 router.delete('/categorias/:id', categoriasController.deleteCategoria)
 
+//********************************************************************************
+// GENEROS
+//********************************************************************************
 router.get('/generos', generoController.getAllGeneros)
 router.get('/generos/:id', generoController.getByIdGenero)
 router.post('/generos', generoController.createGenero)
@@ -24,6 +37,55 @@ router.put('/generos/:id', generoController.updateGenero)
 router.delete('/generos/:id', generoController.deleteGenero)
 
 
+//********************************************************************************
+// ACTORES
+//********************************************************************************
+
+/**
+ * @swagger
+ * /actores:
+ *   get:
+ *     summary: Obtener todos los actores
+ *     description: Devuelve una lista de todos los actores registrados en la base de datos.
+ *     tags:
+ *       - Actores
+ *     responses:
+ *       '200':
+ *         description: Lista de actores obtenida exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   nombre:
+ *                     type: string
+ *                     example: "Juan Pérez"
+ *       '404':
+ *         description: No se encontraron actores.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Actores no encontrados"
+ *       '500':
+ *         description: Error en el servidor al obtener los actores.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No se pudieron traer los actores"
+ */
 router.get('/actores', actoresController.getAllActors)
 
 /**
@@ -63,28 +125,14 @@ router.get('/actores', actoresController.getAllActors)
  */
 router.get('/actores/:id', actoresController.getByIdActor)
 
-router.post('/actores', actoresController.createActor)
-router.post('/actores/bulk', actoresController.bulkCreateActors)
-router.put('/actores/:id', actoresController.updateActor)
-router.patch('/actores/:id', actoresController.patchActor) // Ruta PATCH
-router.delete('/actores/:id', actoresController.deleteActor)
-
 /**
  * @swagger
- * /contenido/agregar_relaciones/{id}:
- *   patch:
- *     summary: Actualizar parcialmente un contenido y agregar relaciones sin reemplazarlas
- *     description: Actualiza datos parciales de un contenido existente y agrega relaciones en géneros, búsquedas y reparto evitando duplicados.
+ * /actores:
+ *   post:
+ *     summary: Crear un nuevo actor
+ *     description: Crea un actor nuevo con el nombre proporcionado. El nombre debe ser único y no puede estar vacío.
  *     tags:
- *       - Contenido
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *           example: 1
- *         description: ID del contenido a actualizar.
+ *       - Actores
  *     requestBody:
  *       required: true
  *       content:
@@ -92,47 +140,28 @@ router.delete('/actores/:id', actoresController.deleteActor)
  *           schema:
  *             type: object
  *             properties:
- *               id:
- *                 type: integer
- *                 description: ID del contenido, debe coincidir con el ID en la URL.
- *                 example: 101
- *               categoria_id:
- *                 type: integer
- *                 description: ID de la categoría asociada.
- *                 example: 2
- *               genero:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Lista de géneros para agregar.
- *                 example: [1, "Comedia", "Drama"]
- *               busqueda:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Lista de términos de búsqueda para agregar.
- *                 example: [2, "Aventura", "Acción"]
- *               reparto:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: Lista de nombres de actores para agregar.
- *                 example: [109, "Actor 1", "Actor 2"]
+ *               nombre:
+ *                 type: string
+ *                 example: "Juan Pérez"
+ *                 description: Nombre único del actor
+ *             required:
+ *               - nombre
  *     responses:
- *       '200':
- *         description: Contenido actualizado correctamente.
+ *       '201':
+ *         description: Actor creado exitosamente.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 nombre:
  *                   type: string
- *                   example: "Contenido actualizado correctamente"
- *                 contenido:
- *                   $ref: '#/components/schemas/Contenido'
+ *                   example: "Juan Pérez"
  *       '400':
- *         description: Error de validación de datos o ID inválido.
+ *         description: Datos inválidos o error al crear el actor.
  *         content:
  *           application/json:
  *             schema:
@@ -142,30 +171,249 @@ router.delete('/actores/:id', actoresController.deleteActor)
  *                   type: string
  *                   example: "Datos inválidos"
  *                 details:
- *                   type: string
- *                   example: "Detalles del error de validación"
- *       '404':
- *         description: Contenido no encontrado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Contenido no encontrado"
- *       '500':
- *         description: Error interno del servidor al intentar actualizar el contenido.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Error al actualizar el contenido"
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       message:
+ *                         type: string
+ *                         example: "\"nombre\" es requerido"
  */
-router.patch('/contenido/agregar_relaciones/:id', contenidoController.patchContenidoAgregarRelaciones)
+router.post('/actores', actoresController.createActor)
+
+router.post('/actores/bulk', actoresController.bulkCreateActors)
+
+/**
+ * @swagger
+ * /actores/{id}:
+ *   put:
+ *     summary: Actualizar un actor por ID
+ *     description: Actualiza los datos de un actor específico usando su ID. Realiza una validación del ID y de los datos enviados en el cuerpo de la solicitud.
+ *     tags:
+ *       - Actores
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del actor a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 example: "Juan Pérez"
+ *                 description: Nombre del actor
+ *             required:
+ *               - nombre
+ *     responses:
+ *       '200':
+ *         description: Actor actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Actor actualizado correctamente"
+ *       '400':
+ *         description: ID o datos inválidos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID inválido"
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       message:
+ *                         type: string
+ *                         example: "\"nombre\" es requerido"
+ *       '404':
+ *         description: Actor no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Actor no encontrado"
+ */
+router.put('/actores/:id', actoresController.updateActor)
+
+/**
+ * @swagger
+ * /actores/{id}:
+ *   patch:
+ *     summary: Actualizar parcialmente un actor por ID
+ *     description: Permite actualizar parcialmente los datos de un actor existente, validando el ID y los datos proporcionados.
+ *     tags:
+ *       - Actores
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID único del actor a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 example: "Juan Pérez"
+ *                 description: Nombre único del actor (opcional)
+ *     responses:
+ *       '200':
+ *         description: Actor actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Actor actualizado correctamente"
+ *       '400':
+ *         description: Datos inválidos o error en la validación.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       message:
+ *                         type: string
+ *                         example: "\"nombre\" no debe estar vacío"
+ *       '404':
+ *         description: Actor no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Actor no encontrado"
+ */
+router.patch('/actores/:id', actoresController.patchActor)
+
+/**
+ * @swagger
+ * /actores/{id}:
+ *   delete:
+ *     summary: Eliminar un actor por ID
+ *     description: Elimina un actor específico en base a su ID. Realiza una validación de ID y maneja posibles errores de relaciones existentes.
+ *     tags:
+ *       - Actores
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del actor a eliminar.
+ *     responses:
+ *       '200':
+ *         description: Actor eliminado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Actor eliminado correctamente"
+ *       '400':
+ *         description: Error de validación de ID o error genérico de procesamiento.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID inválido" 
+ *                 name:
+ *                   type: string
+ *                   example: "SequelizeValidationError"
+ *                 details:
+ *                   type: string
+ *                   example: "Error al eliminar el actor"
+ *       '404':
+ *         description: Actor no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Actor no encontrado"
+ *       '409':
+ *         description: Conflicto al eliminar el actor debido a relaciones existentes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No se puede eliminar el actor porque está relacionado con contenido existente"
+ *                 name:
+ *                   type: string
+ *                   example: "SequelizeForeignKeyConstraintError"
+ *                 details:
+ *                   type: string
+ *                   example: "No se puede eliminar el actor porque está relacionado con contenido existente"
+ *       '500':
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al procesar la solicitud"
+ *                 name:
+ *                   type: string
+ *                   example: "ErrorName"
+ *                 details:
+ *                   type: string
+ *                   example: "Mensaje de error detallado"
+ */
+router.delete('/actores/:id', actoresController.deleteActor)
+
+
+//********************************************************************************
+// CONTENIDOS
+//********************************************************************************
 
 /**
  * @swagger
@@ -920,6 +1168,208 @@ router.put('/contenido/:id', contenidoController.updateContenido)
  *                   example: "Detalle del error interno"
  */
 router.patch('/contenido/:id', contenidoController.patchContenido)
+
+/**
+ * @swagger
+ * /contenido/agregar_relaciones/{id}:
+ *   patch:
+ *     summary: Actualizar parcialmente un contenido y agregar relaciones sin reemplazarlas
+ *     description: Actualiza datos parciales de un contenido existente y agrega relaciones en géneros, búsquedas y reparto evitando duplicados.
+ *     tags:
+ *       - Contenido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del contenido a actualizar.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID del contenido, debe coincidir con el ID en la URL.
+ *                 example: 101
+ *               categoria_id:
+ *                 type: integer
+ *                 description: ID de la categoría asociada.
+ *                 example: 2
+ *               genero:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Lista de géneros para agregar.
+ *                 example: [1, "Comedia", "Drama"]
+ *               busqueda:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Lista de términos de búsqueda para agregar.
+ *                 example: [2, "Aventura", "Acción"]
+ *               reparto:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Lista de nombres de actores para agregar.
+ *                 example: [109, "Actor 1", "Actor 2"]
+ *     responses:
+ *       '200':
+ *         description: Contenido actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Contenido actualizado correctamente"
+ *                 contenido:
+ *                   $ref: '#/components/schemas/Contenido'
+ *       '400':
+ *         description: Error de validación de datos o ID inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: string
+ *                   example: "Detalles del error de validación"
+ *       '404':
+ *         description: Contenido no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Contenido no encontrado"
+ *       '500':
+ *         description: Error interno del servidor al intentar actualizar el contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al actualizar el contenido"
+ */
+router.patch('/contenido/agregar_relaciones/:id', contenidoController.patchContenidoAgregarRelaciones)
+
+/**
+ * @swagger
+ * /contenido/eliminar_relaciones/{id}:
+ *   patch:
+ *     summary: Eliminar relaciones de un contenido existente
+ *     description: Permite eliminar relaciones específicas (géneros, términos de búsqueda y reparto) de un contenido sin afectar otras relaciones.
+ *     tags:
+ *       - Contenido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del contenido del cual se eliminarán relaciones
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         description: Datos de las relaciones a eliminar (género, búsqueda, reparto)
+ *         schema:
+ *           type: object
+ *           properties:
+ *             genero:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: ["Acción", "Drama"]
+ *             busqueda:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: ["Popular", "Nuevo"]
+ *             reparto:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: ["Juan Pérez", "María Gómez"]
+ *     responses:
+ *       '200':
+ *         description: Relaciones eliminadas correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Relaciones eliminadas correctamente"
+ *                 contenido:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     titulo:
+ *                       type: string
+ *                       example: "Película de ejemplo"
+ *                     categoria_id:
+ *                       type: integer
+ *                       example: 2
+ *       '400':
+ *         description: Datos inválidos o error en el procesamiento de la solicitud.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: string
+ *                   example: "El campo 'genero' debe ser un array"
+ *       '404':
+ *         description: Contenido no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Contenido no encontrado"
+ *       '500':
+ *         description: Error en el servidor al eliminar relaciones del contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al eliminar relaciones del contenido"
+ *                 name:
+ *                   type: string
+ *                   example: "SequelizeForeignKeyConstraintError"
+ *                 details:
+ *                   type: string
+ *                   example: "No se puede eliminar el género porque está en uso en otro contenido"
+ */
+router.patch('/contenido/eliminar_relaciones/:id', contenidoController.patchContenidoEliminarRelaciones)
+
 
 /**
  * @swagger

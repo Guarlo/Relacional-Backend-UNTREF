@@ -510,6 +510,64 @@ const patchContenidoAgregarRelaciones = async (req, res) => {
   }
 }
 
+// Eliminar relaciones de un contenido existente sin afectar otras relaciones
+const patchContenidoEliminarRelaciones = async (req, res) => {
+  console.log("patchContenidoEliminarRelaciones")
+  const { id } = req.params
+  const { error, value } = contenidoSchemaPatch.validate(req.body, { abortEarly: false })
+
+  if (error) {
+    return res.status(400).json({ error: 'Datos inválidos', details: error.details.map(e => e.message).join(", ") })
+  }
+
+  const { genero, busqueda, reparto } = req.body
+
+  try {
+    const contenido = await Contenido.findByPk(id)
+    if (!contenido) {
+      return res.status(404).json({ error: 'Contenido no encontrado' })
+    }
+
+    await sequelize.transaction(async (t) => {
+      // Eliminar géneros de la relación si existen
+      if (genero) {
+        const generoIds = await findIds(genero, Genero, 'nombre')
+        const existingGeneroIds = await contenido.getGenero({ transaction: t }).then(generos => generos.map(g => g.id))
+        const idsToRemove = generoIds.filter(id => existingGeneroIds.includes(id))
+        if (idsToRemove.length) {
+          await contenido.removeGenero(idsToRemove, { transaction: t })
+        }
+      }
+
+      // Eliminar términos de búsqueda de la relación si existen
+      if (busqueda) {
+        const busquedaIds = await findIds(busqueda, Busqueda, 'termino')
+        const existingBusquedaIds = await contenido.getBusqueda({ transaction: t }).then(busquedas => busquedas.map(b => b.id))
+        const idsToRemove = busquedaIds.filter(id => existingBusquedaIds.includes(id))
+        if (idsToRemove.length) {
+          await contenido.removeBusqueda(idsToRemove, { transaction: t })
+        }
+      }
+
+      // Eliminar actores del reparto de la relación si existen
+      if (reparto) {
+        const repartoIds = await findIds(reparto, Actor, 'nombre')
+        const existingRepartoIds = await contenido.getReparto({ transaction: t }).then(repartos => repartos.map(r => r.id))
+        const idsToRemove = repartoIds.filter(id => existingRepartoIds.includes(id))
+        if (idsToRemove.length) {
+          await contenido.removeReparto(idsToRemove, { transaction: t })
+        }
+      }
+    })
+
+    res.status(200).json({ message: 'Relaciones eliminadas correctamente', contenido })
+
+  } catch (error) {
+    const statusCode = error.name.includes('Sequelize') ? 400 : 500
+    res.status(statusCode).json({ error: 'Error al eliminar relaciones del contenido', name: error.name, details: error.message })
+  }
+}
+
 module.exports = {
   getAllContenido,
   getByIdContenido,
@@ -519,5 +577,6 @@ module.exports = {
   updateContenido,
   patchContenido,
   deleteContenido,
-  patchContenidoAgregarRelaciones
+  patchContenidoAgregarRelaciones,
+  patchContenidoEliminarRelaciones
 }

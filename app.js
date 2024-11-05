@@ -59,10 +59,9 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost'
 app.listen(PORT, () => {
-  //  console.log(`Server running on port http://localhost:${PORT}/apicontenido`)
-  //  console.log(`Docuentación de la API en http://localhost:${PORT}/api-docs`)
-  console.log(`.env.${ENV}`)
-  console.log(`host: ${process.env.DB_HOST}`)
+  console.log(`Conectando a DB host:  ${process.env.DB_HOST}`)
+  console.log(`Usando configuración:  .env.${ENV}`)
+                  
   if (ENV === 'production' || ENV === 'railway_guarloweb') {
     console.log(`Server running on port ${SERVER_URL}/apicontenido`)
     console.log(`Docuentación de la API en ${SERVER_URL}/api-docs`)
