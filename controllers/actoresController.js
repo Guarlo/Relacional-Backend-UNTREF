@@ -139,9 +139,30 @@ const deleteActor = async (req, res) => {
             res.status(404).json({ error: 'Actor no encontrado' })
         }
     } catch (error) {
-        res.status(500).json({ error: 'Error al eliminar el actor' })
+        let statusCode = 500
+        let statusMessage = 'Error al procesar la solicitud'
+
+        // Verifica si el nombre del error contiene 'Sequelize' y asigna el código de estado según el tipo de error
+        if (error.name.includes('Sequelize')) {
+            if (error.name === 'SequelizeValidationError') {
+                statusCode = 400
+                statusMessage = 'Error al eliminar el actor'
+            } else if (error.name === 'SequelizeForeignKeyConstraintError') {
+                statusCode = 409 // 409 Conflict para errores de claves foráneas
+                statusMessage = 'No se puede eliminar el actor porque está relacionado con contenido existente'
+            } else {
+                statusCode = 400 // Código genérico para otros errores de Sequelize
+                statusMessage = 'Error al procesar la solicitud'
+            }
+        }
+        res.status(statusCode).json({
+            error: statusMessage,
+            name: error.name,
+            details: error.message
+        })
     }
 }
+
 module.exports = {
     getAllActors,
     getByIdActor,

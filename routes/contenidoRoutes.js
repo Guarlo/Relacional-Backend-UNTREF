@@ -69,6 +69,103 @@ router.put('/actores/:id', actoresController.updateActor)
 router.patch('/actores/:id', actoresController.patchActor) // Ruta PATCH
 router.delete('/actores/:id', actoresController.deleteActor)
 
+/**
+ * @swagger
+ * /contenido/agregar_relaciones/{id}:
+ *   patch:
+ *     summary: Actualizar parcialmente un contenido y agregar relaciones sin reemplazarlas
+ *     description: Actualiza datos parciales de un contenido existente y agrega relaciones en géneros, búsquedas y reparto evitando duplicados.
+ *     tags:
+ *       - Contenido
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: ID del contenido a actualizar.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 description: ID del contenido, debe coincidir con el ID en la URL.
+ *                 example: 101
+ *               categoria_id:
+ *                 type: integer
+ *                 description: ID de la categoría asociada.
+ *                 example: 2
+ *               genero:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Lista de géneros para agregar.
+ *                 example: [1, "Comedia", "Drama"]
+ *               busqueda:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Lista de términos de búsqueda para agregar.
+ *                 example: [2, "Aventura", "Acción"]
+ *               reparto:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Lista de nombres de actores para agregar.
+ *                 example: [109, "Actor 1", "Actor 2"]
+ *     responses:
+ *       '200':
+ *         description: Contenido actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Contenido actualizado correctamente"
+ *                 contenido:
+ *                   $ref: '#/components/schemas/Contenido'
+ *       '400':
+ *         description: Error de validación de datos o ID inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Datos inválidos"
+ *                 details:
+ *                   type: string
+ *                   example: "Detalles del error de validación"
+ *       '404':
+ *         description: Contenido no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Contenido no encontrado"
+ *       '500':
+ *         description: Error interno del servidor al intentar actualizar el contenido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al actualizar el contenido"
+ */
+router.patch('/contenido/agregar_relaciones/:id', contenidoController.patchContenidoAgregarRelaciones)
 
 /**
  * @swagger
@@ -885,6 +982,9 @@ router.patch('/contenido/:id', contenidoController.patchContenido)
  *                   example: "Error al eliminar el contenido"
  */
 router.delete('/contenido/:id', contenidoController.deleteContenido)
+
+
+
 
 // Middleware para manejar rutas inválidas
 router.use((req, res, next) => {

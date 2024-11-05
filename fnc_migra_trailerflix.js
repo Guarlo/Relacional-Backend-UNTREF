@@ -1,4 +1,10 @@
-process.loadEnvFile()
+// process.loadEnvFile()
+const dotenv = require('dotenv')
+//const ENV = local
+//const ENV = 'local_guarloweb'
+const ENV = 'local_railway'
+dotenv.config({ path: `.env.${ENV}` })
+
 const fs = require('fs').promises // Usamos la versión de promesas para `fs`
 const Joi = require('joi')
 const express = require('express')

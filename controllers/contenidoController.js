@@ -99,7 +99,12 @@ const getAllContenido = async (req, res) => {
       include
     })
 
-    res.status(200).json(contenidos)
+    if (contenidos) {
+      res.status(200).json(contenidos)
+    } else {
+      res.status(404).json({ error: 'Contenido no encontrado' })
+    }
+
   } catch (error) {
     res.status(500).json({ error: 'No se pudieron obtener los contenidos' })
   }
@@ -190,7 +195,8 @@ const getByIdContenidoFull = async (req, res) => {
     if (!contenido) {
       return res.status(404).json({ error: 'Contenido no encontrado' })
     }
-    res.status(201).json(contenido)
+    res.status(200).json(contenido)
+
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener el contenido y sus relaciones', error })
   }
@@ -205,14 +211,18 @@ const getContenidoByIdActor = async (req, res) => {
   }
 
   try {
-    const actor = await Actor.findByPk(id,
+    const actorContenidos = await Actor.findByPk(id,
       {
         include: {
           model: Contenido
         }
       }
     )
-    res.status(201).json(actor)
+    if (!actorContenidos) {
+      return res.status(404).json({ error: 'Contenido no encontrado' })
+    }
+    res.status(200).json(actorContenidos)
+
   } catch (error) {
     res.status(500).send({ error: 'No se pudo encontrar el contenidos para el actor' })
   }
@@ -265,11 +275,15 @@ const createContenido = async (req, res) => {
       return newContenido
     })
 
-    res.status(201).json(contenido)
+    if (contenido) {
+      res.status(201).json(contenido)
+    } else {
+      res.status(400).json({ error: 'No se pudo crear el Contenido' })
+    }
 
   } catch (error) {
     const statusCode = error.name === 'SequelizeValidationError' ? 400 : 500
-    res.status(statusCode).json({ error: 'Error al crear el contenido', details: error.message })
+    res.status(statusCode).json({ error: 'Error al crear el contenido', name: error.name, details: error.message })
   }
 }
 
@@ -323,7 +337,7 @@ const updateContenido = async (req, res) => {
 
   } catch (error) {
     const statusCode = error.name === 'SequelizeValidationError' ? 400 : 500
-    res.status(statusCode).json({ error: 'Error al actualizar el contenido', details: error.message })
+    res.status(statusCode).json({ error: 'Error al actualizar el contenido', name: error.name, details: error.message })
   }
 }
 
@@ -386,7 +400,7 @@ const patchContenido = async (req, res) => {
 
   } catch (error) {
     const statusCode = error.name === 'SequelizeValidationError' ? 400 : 500
-    res.status(statusCode).json({ error: 'Error al actualizar el contenido', details: error.message })
+    res.status(statusCode).json({ error: 'Error al actualizar el contenido', name: error.name, details: error.message })
   }
 }
 
@@ -414,8 +428,85 @@ const deleteContenido = async (req, res) => {
     } else {
       res.status(404).json({ error: 'Contenido no encontrado' })
     }
+
   } catch (error) {
     res.status(500).json({ error: 'Error al eliminar el contenido' })
+  }
+}
+
+
+// Actualizar parcialmente un contenido existente y agregar relaciones sin reemplazarlas, evitando duplicados
+const patchContenidoAgregarRelaciones = async (req, res) => {
+  console.log("patchContenidoAgregaRelaciones")
+  const { id } = req.params
+  const { error, value } = contenidoSchemaPatch.validate(req.body, { abortEarly: false })
+
+  if (error) {
+    return res.status(400).json({ error: 'Datos inválidos', details: error.details.map(e => e.message).join(", ") })
+  }
+
+  const { genero, busqueda, reparto, categoria_id, ...data } = req.body
+  const contenidoId = data.id
+
+  if (Number(id) !== Number(contenidoId)) {
+    return res.status(400).json({ error: 'Datos inválidos. req.params.id y req.body.id no son iguales!' })
+  }
+
+  try {
+    const contenido = await Contenido.findByPk(id)
+    if (!contenido) {
+      return res.status(404).json({ error: 'Contenido no encontrado' })
+    }
+
+    let categoriaIds = []
+    if (categoria_id) {
+      categoriaIds = await findIds([categoria_id], Categoria, 'nombre')
+      if (!categoriaIds.length) {
+        return res.status(400).json({ error: 'Categoría no encontrada o inválida' })
+      }
+    }
+
+    await sequelize.transaction(async (t) => {
+      await contenido.update({ ...data, categoria_id: categoriaIds[0] || contenido.categoria_id }, { transaction: t })
+
+      // Obtener IDs actuales de géneros, búsquedas y reparto
+      const existingGeneroIds = await contenido.getGenero({ transaction: t }).then(generos => generos.map(g => g.id))
+      const existingBusquedaIds = await contenido.getBusqueda({ transaction: t }).then(busquedas => busquedas.map(b => b.id))
+      const existingRepartoIds = await contenido.getReparto({ transaction: t }).then(repartos => repartos.map(r => r.id))
+
+      // Agregar géneros si no existen en la relación actual
+      if (genero) {
+        const generoIds = await findOrCreateIds(genero, Genero, 'nombre')
+        const newGeneroIds = generoIds.filter(id => !existingGeneroIds.includes(id))
+        if (newGeneroIds.length) {
+          await contenido.addGenero(newGeneroIds, { transaction: t })
+        }
+      }
+
+      // Agregar términos de búsqueda si no existen en la relación actual
+      if (busqueda) {
+        const busquedaIds = await findOrCreateIds(busqueda, Busqueda, 'termino')
+        const newBusquedaIds = busquedaIds.filter(id => !existingBusquedaIds.includes(id))
+        if (newBusquedaIds.length) {
+          await contenido.addBusqueda(newBusquedaIds, { transaction: t })
+        }
+      }
+
+      // Agregar actores al reparto si no existen en la relación actual
+      if (reparto) {
+        const repartoIds = await findOrCreateIds(reparto, Actor, 'nombre')
+        const newRepartoIds = repartoIds.filter(id => !existingRepartoIds.includes(id))
+        if (newRepartoIds.length) {
+          await contenido.addReparto(newRepartoIds, { transaction: t })
+        }
+      }
+    })
+
+    res.status(200).json({ message: 'Contenido actualizado correctamente', contenido })
+
+  } catch (error) {
+    const statusCode = error.name === 'SequelizeValidationError' ? 400 : 500
+    res.status(statusCode).json({ error: 'Error al actualizar el contenido', name: error.name, details: error.message })
   }
 }
 
@@ -427,5 +518,6 @@ module.exports = {
   createContenido,
   updateContenido,
   patchContenido,
-  deleteContenido
+  deleteContenido,
+  patchContenidoAgregarRelaciones
 }

@@ -24,7 +24,11 @@ GET {{baseUrl}}/contenido/74/full
 
 ### Get contenidos por Id de actor
 # Todas la obras de un actor en particular
-GET {{baseUrl}}/contenido/actor/844
+GET {{baseUrl}}/contenido/actor/109
+
+### Get contenidos por Id de actor
+# Actor inexistente
+GET {{baseUrl}}/contenido/actor/1099
 
 
 ### Get de todos los contenidos. Sin discriminar!
@@ -160,6 +164,8 @@ GET {{baseUrl}}/contenido/102/full
 GET {{baseUrl}}/contenido/102
 
 
+### Get contenido por Id con array numérico en relaciones
+GET {{baseUrl}}/contenido/101
 ### Actualizar un contenido. COMPLETO !!!
 # Para este caso, cambia el nonmbre, duracion y 
 # se saca de busqueda el id:1128 !!!
@@ -172,12 +178,12 @@ Content-Type: application/json
   "poster": "./posters/101.jpg",
   "titulo": "101 dálmatas con manchas NEGRAS",
   "categoria_id": "Película",
-  "genero": [2, 12, 13, "Dálmatas"],
+  "genero": [2, 12, "Dálmatas"],
   "busqueda": [3, 89, 99, 1124, 1125, 1126, 1127, "101 dálmatas"],
   "resumen": "Los Dálmatas son 101 (PUT)",
   "temporadas": 0,
   "duracion": 102,
-  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, 834],
+  "reparto": [826, 827, 828, 829, 830, 831, 832, 833, "Perros Dálmatas"],
   "trailer": "https://www.youtube.com/embed/G388UMkJIBE"
 }   
 
@@ -185,7 +191,10 @@ Content-Type: application/json
 # Resultados pos PUT
 # "titulo": "101 dálmatas con manchas NEGRAS",
 # "duracion": 102
+# "resumen": "Los Dálmatas son 101 (PUT)",
+# se quitó el id:13 en genero
 # se quitó el id:1128 en busqueda
+# se quitó el id:834 en reparto
 ##################################################################
 #{
 #  "id": 101,
@@ -196,11 +205,10 @@ Content-Type: application/json
 #  "temporadas": 0,
 #  "duracion": 102,
 #  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
-#  "generoIds": [ 2, 12, 13, 25 ],
+#  "generoIds": [ 2, 12, 26 ],
 #  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
-#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 834 ]
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 840 ]
 #}
-
 
 ### Get contenido por Id con array numérico en relaciones
 GET {{baseUrl}}/contenido/101
@@ -249,12 +257,79 @@ Content-Type: application/json
 {
   "id": 101,
   "poster": "",
-  "titulo": "101 dálmatas con manchas BLANCAS II",
+  "titulo": "101 dálmatas con manchas BLANCAS II (2)",
   "resumen": "Los Dálmatas son 101 (PATCH) SIN ERRORES"
 }
 
 ### Get contenido por Id con array numérico en relaciones
 GET {{baseUrl}}/contenido/101
+
+##################################
+### Agrega solo nuevas relaciones a Contenido
+#Categoríapasa a "Serie"
+# "categoria_id": "Serie",  
+#Generos
+# Agrego {"id": 9, "nombre": "Suspenso" } por id
+# Agrego {"id": 15, "nombre": "Tecnología"} por nombre
+#Busquedas
+# Agrego {"id": 4, "nombre": "Suspenso" } por nombre
+# Agrego {"id": 5, "nombre": "Carl Weathers"} por id 
+#Reparto
+# Agrego {"id": 109, "nombre": "Aaron Paul" } por nombre
+# Agrego {"id": 297, "nombre": "Adam Cozens"} por id 
+##################################
+PATCH {{baseUrl}}/contenido/agregar_relaciones/101             
+Content-Type: application/json
+
+{
+  "id": 101,
+  "categoria_id": 1,  
+  "genero": [9, "Tecnología"],
+  "busqueda": [5, "Suspenso"],
+  "reparto": [297, "Aaron Paul"]
+}   
+
+####################################################################
+# Resultados pos PATCH
+##################################################################
+# ANTES
+#{
+#  "id": 101,
+#  "poster": "./posters/101.jpg",
+#  "titulo": "101 dálmatas con manchas NEGRAS",
+#  "categoria_id": 2,
+#  "resumen": "Los Dálmatas son 101 (PUT)",
+#  "temporadas": 0,
+#  "duracion": 102,
+#  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
+#  "generoIds": [ 2, 12, 26 ],
+#  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 840 ]
+
+#}
+# DESPUES
+#{
+#  "id": 101,
+#  "poster": "./posters/101.jpg",
+#  "titulo": "101 dálmatas con manchas NEGRAS",
+#  "categoria_id": 1,  
+#       --->  (PaSó a 1-Serie)
+#  "resumen": "Los Dálmatas son 101 (PUT)",
+#  "temporadas": 0,
+#  "duracion": 102,
+#  "trailer": "https://www.youtube.com/embed/G388UMkJIBE",
+#  "generoIds": [ 2, 12, 26 ],
+#       --->  Se suma (9 y 15)
+#  "busquedaIds": [ 3, 89, 99, 1124, 1125, 1126, 1127, 1130 ],
+#       --->  Se suma (5 y 4)
+#  "repartoIds": [ 826, 827, 828, 829, 830, 831, 832, 833, 840 ]
+#       --->  Se suma (109 y 297)
+#}
+
+### Get contenido por Id con array numérico en relaciones
+GET {{baseUrl}}/contenido/101
+
+
 
 
 
@@ -266,12 +341,16 @@ GET {{baseUrl}}/contenido/101
 DELETE {{baseUrl}}/contenido/101
 ################################
 DELETE {{baseUrl}}/contenido/102
+################################
+DELETE {{baseUrl}}/contenido/103
 
 ### Get contenido por Id con array numérico en relaciones
 GET {{baseUrl}}/contenido/101
-
 ### Get contenido por Id con array numérico en relaciones
 GET {{baseUrl}}/contenido/102
+### Get contenido por Id con array numérico en relaciones
+GET {{baseUrl}}/contenido/103
+
 
 
 
@@ -284,8 +363,11 @@ GET {{baseUrl}}/contenido/102
 GET {{baseUrl}}/generos
 
 ### Get generos por Id
-GET {{baseUrl}}/generos/35
-
+GET {{baseUrl}}/generos/1
+### Get generos por Id
+GET {{baseUrl}}/generos/2
+### Get generos por Id
+GET {{baseUrl}}/generos/399999
 
 ### Crear un genero
 POST {{baseUrl}}/generos
@@ -296,7 +378,7 @@ Content-Type: application/json
 }
 
 ### Get generos por Id
-GET {{baseUrl}}/generos/23
+GET {{baseUrl}}/generos/27
 
 ### Get generos por Id
 GET {{baseUrl}}/generos/24
@@ -309,7 +391,7 @@ GET {{baseUrl}}/generos/26
 
 
 ### Actualizar un genero totalmente 
-PUT {{baseUrl}}/generos/25
+PUT {{baseUrl}}/generos/27
 Content-Type: application/json
 
 {
@@ -318,7 +400,7 @@ Content-Type: application/json
 
 ### Delete generos por Id
 # Si el genero está usado en la tabla contenido_generos, da un error!
-DELETE {{baseUrl}}/generos/26
+DELETE {{baseUrl}}/generos/27
 
 
 
@@ -336,6 +418,12 @@ GET {{baseUrl}}/categorias
 
 ### Get categorias por Id
 GET {{baseUrl}}/categorias/2
+
+### Get categorias por Id
+GET {{baseUrl}}/categorias/1
+
+### Get categorias por Id
+GET {{baseUrl}}/categorias/3
 
 ### Crear una categorias
 POST {{baseUrl}}/categorias
@@ -379,6 +467,8 @@ Content-Type: application/json
 
 ### DELETE categorias por Id
 DELETE {{baseUrl}}/categorias/3
+### DELETE categorias por Id (No permitido)
+DELETE {{baseUrl}}/categorias/1
 
 
 
@@ -394,7 +484,10 @@ DELETE {{baseUrl}}/categorias/3
 GET {{baseUrl}}/actores
 
 ### Get actor por Id
-GET {{baseUrl}}/actores/840
+GET {{baseUrl}}/actores/1
+### Get actor por Id
+GET {{baseUrl}}/actores/109
+
 
 ### Crear un actor
 POST {{baseUrl}}/actores
@@ -405,15 +498,18 @@ Content-Type: application/json
 }
 
 ### Actualizar un actor totalmente 
-PUT {{baseUrl}}/actores/840
+PUT {{baseUrl}}/actores/841
 Content-Type: application/json
 
 {
   "nombre": "Gustavo Torrente Nuñez"
 }
 
+### Get actor por Id
+GET {{baseUrl}}/actores/841
+
 ### Actualizar un actor parcialmente
-PATCH {{baseUrl}}/actores/840
+PATCH {{baseUrl}}/actores/841
 Content-Type: application/json
 
 {
@@ -436,6 +532,13 @@ Content-Type: application/json
   "nombre": ""
 }
 
+### DELETE categorias por Id (No permitido)
+# Con detección de error "SequelizeForeignKeyConstraintError"
+# 
+DELETE {{baseUrl}}/actores/19999
+
+
+
 
 ################################
 ##  GENEROS
@@ -445,11 +548,8 @@ Content-Type: application/json
 GET {{baseUrl}}/generos
 
 ### Get genero por Id
-GET {{baseUrl}}/generos/40
+GET {{baseUrl}}/generos/24
 
-
-### Get genero por Id y sus contenidos
-GET {{baseUrl}}/generos/30/contenido 
 
 
 ### Crear un genero
