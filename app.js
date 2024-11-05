@@ -2,10 +2,10 @@
 const dotenv = require('dotenv')
 const ENV = process.env.NODE_ENV || 'local'
 dotenv.config({ path: `.env.${ENV}` })
-if (ENV === 'local' || ENV === 'local_guarloweb' || ENV === 'local_railway') {
-  console.log(`.env.${ENV}`)
-  console.log(`host: ${process.env.DB_HOST}`)
-}
+//if (ENV === 'local' || ENV === 'local_guarloweb' || ENV === 'local_railway') {
+//  console.log(`.env.${ENV}`)
+//  console.log(`host: ${process.env.DB_HOST}`)
+//}
 
 const morgan = require('morgan')
 const express = require('express')
