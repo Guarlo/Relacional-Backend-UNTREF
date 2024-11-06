@@ -9,6 +9,8 @@ DB_PASSWORD=1234
 DB_DIALECT=mysql
 
 # Configuración del servidor
+SERVER_URL=http://localhost
+#SERVER_URL=https://relacional-backend-untref-production.up.railway.app
 PORT=3000
 
 # Configuración para Swagger

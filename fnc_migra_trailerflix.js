@@ -1,7 +1,6 @@
 // process.loadEnvFile()
 const dotenv = require('dotenv')
 //const ENV = local
-//const ENV = 'local_guarloweb'
 const ENV = 'local_railway'
 dotenv.config({ path: `.env.${ENV}` })
 

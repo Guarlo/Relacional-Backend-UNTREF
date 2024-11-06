@@ -1,6 +1,6 @@
 #Servidores 
-@baseUrl = http://localhost:3000/apicontenido
-#@baseUrl = https://relacional-backend-untref-production.up.railway.app/apicontenido
+#@baseUrl = http://localhost:3000/apicontenido
+@baseUrl = https://relacional-backend-untref-production.up.railway.app/apicontenido
 
 
 ### Bienvenida
@@ -9,6 +9,10 @@ GET http://localhost:3000/
 ### Bienvenida
 #GET https://relacional-backend-untref-production.up.railway.app/apicontenido/
 GET {{baseUrl}}/
+
+### Ruta de contenidos inválida
+GET {{baseUrl}}/cualquiera
+
 
 ################################
 ##  CONTENIDO
@@ -53,6 +57,12 @@ GET {{baseUrl}}/contenido?categoria={{categoria}}&genero={{genero}}&reparto={{re
 @genero = Sci-Fi
 ### Obtener contenidos filtrados por parámetros específicos
 GET {{baseUrl}}/contenido?genero={{genero}}
+
+### Valores de los parámetros. Solo categoria
+@categoria = 1
+### Obtener contenidos filtrados por parámetros específicos
+GET {{baseUrl}}/contenido?categoria={{categoria}}
+
 
 
 ##
@@ -264,7 +274,8 @@ Content-Type: application/json
 }
 
 ### Get contenido por Id con array numérico en relaciones
-GET {{baseUrl}}/contenido/101
+GET {{baseUrl}}/contenido/101/full
+
 
 ##################################
 ### Agrega solo nuevas relaciones a Contenido

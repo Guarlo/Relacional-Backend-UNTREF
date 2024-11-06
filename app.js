@@ -2,10 +2,6 @@
 const dotenv = require('dotenv')
 const ENV = process.env.NODE_ENV || 'local'
 dotenv.config({ path: `.env.${ENV}` })
-//if (ENV === 'local' || ENV === 'local_guarloweb' || ENV === 'local_railway') {
-//  console.log(`.env.${ENV}`)
-//  console.log(`host: ${process.env.DB_HOST}`)
-//}
 
 const morgan = require('morgan')
 const express = require('express')
@@ -61,8 +57,8 @@ const SERVER_URL = process.env.SERVER_URL || 'http://localhost'
 app.listen(PORT, () => {
   console.log(`Conectando a DB host:  ${process.env.DB_HOST}`)
   console.log(`Usando configuración:  .env.${ENV}`)
-                  
-  if (ENV === 'production' || ENV === 'railway_guarloweb') {
+
+  if (ENV === 'production') {
     console.log(`Server running on port ${SERVER_URL}/apicontenido`)
     console.log(`Docuentación de la API en ${SERVER_URL}/api-docs`)
   } else {

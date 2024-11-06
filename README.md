@@ -17,7 +17,7 @@ En este proyecto, se desarrolla una plataforma de streaming usando Node.js y MyS
 - Este archivo se usa como base para diseñar el modelo de datos.
 
 ### Herramientas utilizadas
-- La **I.A.** ha sido de una ayuda invaluable, pero dado que los resultados de ésta, para transformar el archivo *trailerflix.json* en un formato para insertar en MySQL fueron negativos, decidí usar JS para crear una función  llamada fnc_migra_trailerflix.js 
+- La **I.A.** ha sido de una ayuda invaluable, pero dado que los resultados de ésta, para transformar el archivo *trailerflix.json* en un formato para insertar en MySQL fueron negativos, decidí usar JS para crear una función llamada: fnc_migra_trailerflix.js 
 - Workbench para diseñar, crear y administrar la base de datos.
 - Documentación con Swagger.
  
@@ -31,12 +31,14 @@ En este proyecto, se desarrolla una plataforma de streaming usando Node.js y MyS
     "swagger-ui-express": "^5.0.1"
 
 ## Migración de dato (caso particular)!
-La importación de datos está hecha en JS mediante la función fnc_migra_trailerflix.js. Esta función lee el archivo trailerflix.json, le hace ajustes para que cumpla con el formato de **POST_http://localhost:3000/apicontenido/contenido/** y carga la totalidad de las tablas creando todos los registros para cada una de las tablas y arma las relaciones correspondientes. Evalúa repeticiones, datos nulos en algunos de los objetos y datos mal formados que llegan desde el archivo trailerflix.json.
+La importación de datos está hecha en JS mediante la función *fnc_migra_trailerflix.js*. Esta función lee el archivo trailerflix.json, le hace ajustes para que cumpla con el formato de **POST_http://localhost:3000/apicontenido/contenido/** y carga la totalidad de las tablas creando todos los registros para cada una de las tablas y arma las relaciones correspondientes. Evalúa repeticiones, datos nulos en algunos de los objetos y datos mal formados que llegan desde el archivo trailerflix.json. Luego deja un archivo .json de log en la carpeta \output
 
 
 ### Cómo usar fnc_migra_trailerflix.js
     1. Lo primero es crear la base de datos con: trailerflixDump20241029_estructura.sql
-    2. Ejecutar desde la consola: ..\>node .\fnc_migra_trailerflix.js
+    2. Hecer con Workbech: INSERT INTO `categorias` VALUES (2,'Película'),(1,'Serie');
+    3. Editar fnc_migra_trailerflix.js para definir en la parte superior a que base de datos desea actualizar: const ENV = local  ó  const ENV = 'local_railway'
+    4. Ejecutar desde la consola: ..\>node .\fnc_migra_trailerflix.js
     Listo! ya se puede comenzar a usar la API 
 
 
@@ -109,7 +111,9 @@ En la carpeta ./database están los archivos .sql para crear la DB y otras accio
 
 ## Documentación de los endpoint de la API
  La documentacion de los endpoint se realiza mediante *Swagger*.
-- Punto de acceso: http://localhost:3000/api-docs
+- Punto de acceso local: http://localhost:3000/api-docs 
+- Punto de acceso desplegado: https://relacional-backend-untref-production.up.railway.app/api-docs/ 
+- 
 Algunas de las funciones se pueden probar desde esta url de documentación. La funcionalidad completa se logra con  **REST Client** desde *api.http*
 
 
@@ -117,7 +121,8 @@ Algunas de las funciones se pueden probar desde esta url de documentación. La f
 ## Uso de los endpoint mediante api.http
 Mediante **REST Client** se crea api.http donde se pueden probar los endpoints de la API.
 Aquí es donde se encuentra toda la funcionalidad que puede proveer la API para ser testeada.  
-- Punto de acceso: http://localhost:3000/apicontenido
+- Punto de acceso local: http://localhost:3000/apicontenido
+- Punto de acceso desplegado: https://relacional-backend-untref-production.up.railway.app/apicontenido
 
 
 ## Estructura del Repositorio
@@ -184,6 +189,3 @@ Este proyecto permite aplicar conceptos claves de desarrollo backend, diseño de
 Ésto es un desafío para mí. Volver a estudiar a este nivel universitario, después de treinta años de mis primeros pasos en el mundo de sistemas, es una gran satisfacción!
 
 "Gracias a todos los docentes por la calidad humana y el profesionalismo!"
-
----
-
